@@ -13,10 +13,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useProfile } from "@/contexts/ProfileContext";
-import { AvatarSelector, AVATARS } from "./AvatarSelector";
+import { AvatarSelector, BOY_AVATARS, GIRL_AVATARS } from "./AvatarSelector";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
@@ -28,6 +31,9 @@ const profileFormSchema = z.object({
     message: "La edad debe ser al menos 3 años.",
   }).max(12, {
     message: "La edad debe ser como máximo 12 años.",
+  }),
+  gender: z.enum(['boy', 'girl'], {
+    required_error: "Por favor, selecciona un género.",
   }),
   avatar: z.string().min(1, { message: "Por favor, selecciona un avatar." }),
 });
@@ -47,10 +53,31 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: "",
-      age: undefined, 
-      avatar: AVATARS[0]?.id || "",
+      age: undefined,
+      gender: undefined, 
+      avatar: "", // Initial avatar is empty
     },
   });
+
+  const watchedGender = form.watch('gender');
+
+  useEffect(() => {
+    if (watchedGender) {
+      const newAvatarList = watchedGender === 'boy' ? BOY_AVATARS : GIRL_AVATARS;
+      if (newAvatarList.length > 0) {
+        const currentAvatarValue = form.getValues('avatar');
+        const isCurrentAvatarInNewList = newAvatarList.some(avatar => avatar.id === currentAvatarValue);
+        
+        // Set to first avatar of the new list if current is not in new list, or if avatar is currently empty
+        if (!isCurrentAvatarInNewList || !currentAvatarValue) {
+           form.setValue('avatar', newAvatarList[0].id, { shouldValidate: true });
+        }
+      }
+    } else {
+      // If gender is unselected, clear avatar
+      form.setValue('avatar', '', { shouldValidate: true });
+    }
+  }, [watchedGender, form]);
 
   function onSubmit(data: ProfileFormValues) {
     if (profiles.length >= 3) {
@@ -62,7 +89,7 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
       return;
     }
     try {
-      const newProfile = addProfile(data);
+      const newProfile = addProfile(data as Omit<ProfileFormValues, 'id'> & { gender: 'boy' | 'girl' });
       toast({
         title: "¡Perfil creado!",
         description: `¡Bienvenido/a, ${newProfile.name}!`,
@@ -85,22 +112,6 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4 md:p-6 bg-card shadow-lg rounded-lg">
-        <FormField
-          control={form.control}
-          name="avatar"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Elige Tu Avatar</FormLabel>
-              <FormControl>
-                <AvatarSelector
-                  selectedAvatar={field.value}
-                  onSelectAvatar={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="name"
@@ -127,6 +138,56 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>Género</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="boy" />
+                    </FormControl>
+                    <Label className="font-normal">Niño</Label>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="girl" />
+                    </FormControl>
+                    <Label className="font-normal">Niña</Label>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        {watchedGender && (
+          <FormField
+            control={form.control}
+            name="avatar"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Elige Tu Avatar</FormLabel>
+                <FormControl>
+                  <AvatarSelector
+                    selectedAvatar={field.value}
+                    onSelectAvatar={field.onChange}
+                    gender={watchedGender}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <Button type="submit" className="w-full" size="lg">Crear Perfil</Button>
       </form>
     </Form>

@@ -3,4 +3,5 @@ export interface Profile {
   name: string;
   age: number;
   avatar: string; // URL or identifier for avatar
+  gender: 'boy' | 'girl';
 }

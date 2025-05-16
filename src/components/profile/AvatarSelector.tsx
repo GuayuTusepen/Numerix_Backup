@@ -3,23 +3,37 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
-export const AVATARS = [
-  { id: 'lion', src: 'https://placehold.co/100x100.png', alt: 'León', hint: 'lion cartoon' },
-  { id: 'bear', src: 'https://placehold.co/100x100.png', alt: 'Oso', hint: 'bear cartoon' },
-  { id: 'rabbit', src: 'https://placehold.co/100x100.png', alt: 'Conejo', hint: 'rabbit cartoon' },
-  { id: 'fox', src: 'https://placehold.co/100x100.png', alt: 'Zorro', hint: 'fox cartoon' },
-  { id: 'panda', src: 'https://placehold.co/100x100.png', alt: 'Panda', hint: 'panda cartoon' },
+export const BOY_AVATARS = [
+  { id: 'boy-superhero', src: 'https://placehold.co/100x100.png', alt: 'Superhéroe Niño', hint: 'boy superhero' },
+  { id: 'boy-astronaut', src: 'https://placehold.co/100x100.png', alt: 'Astronauta Niño', hint: 'boy astronaut' },
+  { id: 'boy-explorer', src: 'https://placehold.co/100x100.png', alt: 'Explorador Niño', hint: 'boy explorer' },
 ];
+
+export const GIRL_AVATARS = [
+  { id: 'girl-fairy', src: 'https://placehold.co/100x100.png', alt: 'Hada Niña', hint: 'girl fairy' },
+  { id: 'girl-scientist', src: 'https://placehold.co/100x100.png', alt: 'Científica Niña', hint: 'girl scientist' },
+  { id: 'girl-artist', src: 'https://placehold.co/100x100.png', alt: 'Artista Niña', hint: 'girl artist' },
+];
+
+// Combined list for components that need to look up any avatar by ID
+export const AVATARS = [...BOY_AVATARS, ...GIRL_AVATARS];
 
 interface AvatarSelectorProps {
   selectedAvatar: string;
   onSelectAvatar: (avatarId: string) => void;
+  gender?: 'boy' | 'girl';
 }
 
-export function AvatarSelector({ selectedAvatar, onSelectAvatar }: AvatarSelectorProps) {
+export function AvatarSelector({ selectedAvatar, onSelectAvatar, gender }: AvatarSelectorProps) {
+  if (!gender) {
+    return <p className="text-muted-foreground text-sm">Por favor, selecciona un género para ver los avatares disponibles.</p>;
+  }
+
+  const currentAvatarList = gender === 'boy' ? BOY_AVATARS : GIRL_AVATARS;
+
   return (
     <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-      {AVATARS.map((avatar) => (
+      {currentAvatarList.map((avatar) => (
         <button
           key={avatar.id}
           type="button"

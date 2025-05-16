@@ -34,10 +34,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     if (storedActiveProfileId && storedProfiles.some(p => p.id === storedActiveProfileId)) {
       setActiveProfileId(storedActiveProfileId);
     } else if (storedProfiles.length > 0) {
-      // If active profile ID is invalid or null, but profiles exist, select the first one.
-      // setActiveProfileId(storedProfiles[0].id);
-      // setLocalStorageItem(ACTIVE_PROFILE_ID_STORAGE_KEY, storedProfiles[0].id);
-      // Or leave it null to force selection
        setActiveProfileId(null);
        setLocalStorageItem(ACTIVE_PROFILE_ID_STORAGE_KEY, null);
     }
@@ -52,6 +48,14 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const addProfile = (profileData: Omit<Profile, 'id'>): Profile => {
     if (profiles.length >= 3) {
       throw new Error("Maximum of 3 profiles allowed.");
+    }
+    // Ensure gender is provided, default if necessary or throw error
+    if (!profileData.gender) {
+        // This case should ideally be handled by form validation
+        // For safety, you could default or throw:
+        // throw new Error("Gender is required to create a profile.");
+        // Or default: profileData.gender = 'boy'; 
+        // However, schema validation should prevent this.
     }
     const newProfile: Profile = { ...profileData, id: Date.now().toString() };
     const updatedProfiles = [...profiles, newProfile];
