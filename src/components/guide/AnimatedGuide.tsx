@@ -48,12 +48,12 @@ export function AnimatedGuide({ message: initialMessage }: AnimatedGuideProps) {
       </div>
       <div className="bg-primary p-3 rounded-full shadow-lg animate-bounce">
         <Image 
-          src="https://placehold.co/80x80.png" 
+          src="/guide/friendly-owl.png" // Asumiendo que la imagen está en public/guide/friendly-owl.png
           alt="Guía Amigable" 
           width={80} 
           height={80} 
           className="rounded-full"
-          data-ai-hint="owl mascot"
+          data-ai-hint="owl mascot" // Se mantiene el hint por si acaso
         />
       </div>
     </div>
