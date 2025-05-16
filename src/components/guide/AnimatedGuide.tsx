@@ -23,12 +23,18 @@ export function AnimatedGuide({ message: initialMessage }: AnimatedGuideProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   const personalizeMessage = (msg: string): string => {
-    if (activeProfile?.gender) {
-      const listoLista = activeProfile.gender === 'boy' ? 'listo' : 'lista';
-      return msg.replace("{listo_lista}", listoLista);
+    const gender = activeProfile?.gender;
+    let personalizedWord: string;
+
+    if (gender === 'girl') {
+      personalizedWord = 'lista';
+    } else if (gender === 'boy') {
+      personalizedWord = 'listo';
+    } else {
+      // Fallback for undefined gender or if activeProfile is null/not yet loaded
+      personalizedWord = 'listo/a';
     }
-    // Fallback if gender is not defined or profile not loaded yet
-    return msg.replace("{listo_lista}", "listo/a"); 
+    return msg.replace("{listo_lista}", personalizedWord);
   };
 
   useEffect(() => {

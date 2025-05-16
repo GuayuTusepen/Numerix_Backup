@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Profile } from '@/types/profile';
@@ -47,17 +48,20 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   const addProfile = (profileData: Omit<Profile, 'id'>): Profile => {
     if (profiles.length >= 3) {
-      throw new Error("Maximum of 3 profiles allowed.");
+      throw new Error("Límite máximo de 3 perfiles alcanzado.");
     }
-    // Ensure gender is provided, default if necessary or throw error
     if (!profileData.gender) {
-        // This case should ideally be handled by form validation
-        // For safety, you could default or throw:
-        // throw new Error("Gender is required to create a profile.");
-        // Or default: profileData.gender = 'boy'; 
-        // However, schema validation should prevent this.
+        // This case should be prevented by form validation.
+        // As a safeguard, but ideally form ensures gender is always 'boy' or 'girl'.
+        throw new Error("El género es requerido para crear un perfil.");
     }
-    const newProfile: Profile = { ...profileData, id: Date.now().toString() };
+    const newProfile: Profile = {
+      id: Date.now().toString(),
+      name: profileData.name,
+      age: profileData.age,
+      avatar: profileData.avatar,
+      gender: profileData.gender, // Explicitly assign gender
+    };
     const updatedProfiles = [...profiles, newProfile];
     saveProfiles(updatedProfiles);
     selectProfile(newProfile.id); // Auto-select new profile
@@ -98,7 +102,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 export function useProfile() {
   const context = useContext(ProfileContext);
   if (context === undefined) {
-    throw new Error('useProfile must be used within a ProfileProvider');
+    throw new Error('useProfile debe ser usado dentro de un ProfileProvider');
   }
   return context;
 }
