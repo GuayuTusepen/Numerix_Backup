@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -23,6 +24,9 @@ export default function DashboardPage() {
     return <p className="text-center text-lg text-muted-foreground">Cargando progreso...</p>;
   }
 
+  const greeting = activeProfile.gender === 'boy' ? 'Bienvenido' : 'Bienvenida';
+  const readyText = activeProfile.gender === 'boy' ? '¿Listo' : '¿Lista';
+
   if (selectedCategory) {
     return (
       <div className="space-y-8">
@@ -47,12 +51,12 @@ export default function DashboardPage() {
       <header className="text-center space-y-2">
         <h1 className="text-5xl font-extrabold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            ¡Bienvenido/a, {activeProfile.name}!
+            ¡{greeting}, {activeProfile.name}!
           </span>
         </h1>
         <p className="text-xl text-muted-foreground flex items-center justify-center">
           <Sparkles className="mr-2 h-6 w-6 text-yellow-400" />
-          ¿Listo/a para una nueva aventura de aprendizaje?
+          {readyText} para una nueva aventura de aprendizaje?
         </p>
       </header>
 

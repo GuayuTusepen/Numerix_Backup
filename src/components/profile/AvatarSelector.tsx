@@ -5,17 +5,17 @@ import { cn } from '@/lib/utils';
 
 // Asumiendo que las imágenes están en public/avatars/
 export const BOY_AVATARS = [
-  { id: 'boy-superhero', src: '/avatars/boy-superhero.png', alt: 'Superhéroe Niño', hint: 'boy superhero' },
-  { id: 'boy-astronaut', src: '/avatars/boy-astronaut.png', alt: 'Astronauta Niño', hint: 'boy astronaut' },
-  { id: 'boy-explorer', src: '/avatars/boy-explorer.png', alt: 'Explorador Niño', hint: 'boy explorer' },
+  { id: 'boy-1', src: '/avatars/Pfp_Boy1.png', alt: 'Avatar Niño 1', hint: 'boy 1' },
+  { id: 'boy-2', src: '/avatars/Pfp_Boy2.png', alt: 'Avatar Niño 2', hint: 'boy 2' },
+  { id: 'boy-3', src: '/avatars/Pfp_Boy3.png', alt: 'Avatar Niño 3', hint: 'boy 3' },
+ 
 ];
 
 export const GIRL_AVATARS = [
-  { id: 'girl-fairy', src: '/avatars/girl-fairy.png', alt: 'Hada Niña', hint: 'girl fairy' },
-  { id: 'girl-scientist', src: '/avatars/girl-scientist.png', alt: 'Científica Niña', hint: 'girl scientist' },
-  { id: 'girl-artist', src: '/avatars/girl-artist.png', alt: 'Artista Niña', hint: 'girl artist' },
+  { id: 'girl-1', src: '/avatars/Pfp_Girl1.png', alt: 'Avatar Niña 1', hint: 'girl 1' },
+  { id: 'girl-2', src: '/avatars/Pfp_Girl2.png', alt: 'Avatar Niña 2', hint: 'girl 2' },
+  { id: 'girl-3', src: '/avatars/Pfp_Girl3.png', alt: 'Avatar Niña 3', hint: 'girl 3' },
 ];
-
 // Combined list for components that need to look up any avatar by ID
 export const AVATARS = [...BOY_AVATARS, ...GIRL_AVATARS];
 
