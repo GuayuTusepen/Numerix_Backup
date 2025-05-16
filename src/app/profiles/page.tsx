@@ -25,7 +25,7 @@ export default function ProfilesPage() {
   const handleProfileDelete = (profileId: string) => {
     try {
       deleteProfile(profileId);
-      toast({ title: "Profile deleted", description: "The profile has been removed." });
+      toast({ title: "Perfil eliminado", description: "El perfil ha sido eliminado." });
     } catch (error) {
       toast({ variant: "destructive", title: "Error", description: (error as Error).message });
     }
@@ -35,7 +35,7 @@ export default function ProfilesPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <Logo size="lg" />
-        <p className="mt-4 text-xl text-foreground">Loading profiles...</p>
+        <p className="mt-4 text-xl text-foreground">Cargando perfiles...</p>
       </div>
     );
   }
@@ -45,9 +45,9 @@ export default function ProfilesPage() {
       <header className="mb-12 text-center">
         <Logo size="lg" />
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
-          {profiles.length > 0 ? 'Who is Learning Today?' : 'Create Your First Profile!'}
+          {profiles.length > 0 ? '¿Quién Aprende Hoy?' : '¡Crea Tu Primer Perfil!'}
         </h1>
-        {profiles.length > 0 && <p className="mt-2 text-lg text-muted-foreground">Select a profile to continue or create a new one.</p>}
+        {profiles.length > 0 && <p className="mt-2 text-lg text-muted-foreground">Selecciona un perfil para continuar o crea uno nuevo.</p>}
       </header>
 
       {profiles.length > 0 && (
@@ -68,13 +68,13 @@ export default function ProfilesPage() {
         <DialogTrigger asChild>
           {profiles.length < 3 && (
              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full shadow-lg transition-transform hover:scale-105">
-              <PlusCircle className="mr-2 h-6 w-6" /> Create New Profile
+              <PlusCircle className="mr-2 h-6 w-6" /> Crear Nuevo Perfil
             </Button>
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-card rounded-xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl text-center text-primary">Create a New Profile</DialogTitle>
+            <DialogTitle className="text-2xl text-center text-primary">Crear un Nuevo Perfil</DialogTitle>
           </DialogHeader>
           <CreateProfileForm onProfileCreated={() => {
             setShowCreateForm(false);
@@ -85,14 +85,14 @@ export default function ProfilesPage() {
 
       {profiles.length === 0 && !showCreateForm && (
         <p className="mt-4 text-muted-foreground">
-          Click the button above to get started!
+          ¡Haz clic en el botón de arriba para empezar!
         </p>
       )}
 
       {profiles.length >= 3 && (
         <p className="mt-8 text-center text-muted-foreground bg-muted p-3 rounded-md">
           <Users className="inline-block mr-2 h-5 w-5" />
-          You have reached the maximum of 3 profiles.
+          Has alcanzado el máximo de 3 perfiles.
         </p>
       )}
     </div>

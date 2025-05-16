@@ -15,12 +15,19 @@ interface LessonItemCardProps {
 
 function DifficultyBadge({ difficulty }: { difficulty: Lesson['difficulty'] }) {
   let bgColor = 'bg-green-100 text-green-700';
-  if (difficulty === 'medium') bgColor = 'bg-yellow-100 text-yellow-700';
-  if (difficulty === 'hard') bgColor = 'bg-red-100 text-red-700';
+  let difficultyText = 'Fácil';
+  if (difficulty === 'medium') {
+    bgColor = 'bg-yellow-100 text-yellow-700';
+    difficultyText = 'Medio';
+  }
+  if (difficulty === 'hard') {
+    bgColor = 'bg-red-100 text-red-700';
+    difficultyText = 'Difícil';
+  }
 
   return (
     <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${bgColor}`}>
-      {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+      {difficultyText}
     </span>
   );
 }
@@ -59,7 +66,7 @@ export function LessonItemCard({ lesson, progress }: LessonItemCardProps) {
           <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
             <Link href={`/lessons/${lesson.id}`}>
               <PlayCircle className="mr-2 h-4 w-4" />
-              {progress?.completed ? 'Replay' : 'Start'}
+              {progress?.completed ? 'Repetir' : 'Empezar'}
             </Link>
           </Button>
         </div>

@@ -18,7 +18,7 @@ export function SplashScreen() {
       <div className="animate-bounce">
         <Logo size="lg" />
       </div>
-      <p className="mt-4 text-xl text-foreground">Loading{dots}</p>
+      <p className="mt-4 text-xl text-foreground">Cargando{dots}</p>
     </div>
   );
 }

@@ -42,7 +42,7 @@ export function AppNavbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/dashboard" aria-label="Go to dashboard">
+        <Link href="/dashboard" aria-label="Ir al panel">
           <Logo size="sm" />
         </Link>
 
@@ -62,7 +62,7 @@ export function AppNavbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Hi, {activeProfile.name}!</DropdownMenuLabel>
+                <DropdownMenuLabel>¡Hola, {activeProfile.name}!</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {profiles.filter(p => p.id !== activeProfile.id).slice(0,2).map(profile => (
                   <DropdownMenuItem key={profile.id} onClick={() => handleProfileSwitch(profile.id)}>
@@ -70,31 +70,31 @@ export function AppNavbar() {
                        <AvatarImage src={AVATARS.find(a => a.id === profile.avatar)?.src} alt={profile.name} data-ai-hint={AVATARS.find(a => a.id === profile.avatar)?.hint}/>
                        <AvatarFallback>{profile.name.substring(0,2).toUpperCase()}</AvatarFallback>
                      </Avatar>
-                    Switch to {profile.name}
+                    Cambiar a {profile.name}
                   </DropdownMenuItem>
                 ))}
                 {profiles.length > 1 && <DropdownMenuSeparator />}
                 <DropdownMenuItem onClick={handleManageProfiles}>
                   <Users className="mr-2 h-4 w-4" />
-                  Manage Profiles
+                  Gestionar Perfiles
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled> {/* Placeholder for future features */}
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  Configuración
                 </DropdownMenuItem>
                 <DropdownMenuItem disabled> {/* Placeholder for future features */}
                   <HelpCircle className="mr-2 h-4 w-4" />
-                  Help
+                  Ayuda
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                   <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
+                  Cerrar Sesión
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleManageProfiles}>Select Profile</Button>
+            <Button onClick={handleManageProfiles}>Seleccionar Perfil</Button>
           )}
         </div>
       </div>

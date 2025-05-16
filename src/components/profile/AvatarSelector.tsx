@@ -4,10 +4,10 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 export const AVATARS = [
-  { id: 'lion', src: 'https://placehold.co/100x100.png', alt: 'Lion', hint: 'lion cartoon' },
-  { id: 'bear', src: 'https://placehold.co/100x100.png', alt: 'Bear', hint: 'bear cartoon' },
-  { id: 'rabbit', src: 'https://placehold.co/100x100.png', alt: 'Rabbit', hint: 'rabbit cartoon' },
-  { id: 'fox', src: 'https://placehold.co/100x100.png', alt: 'Fox', hint: 'fox cartoon' },
+  { id: 'lion', src: 'https://placehold.co/100x100.png', alt: 'León', hint: 'lion cartoon' },
+  { id: 'bear', src: 'https://placehold.co/100x100.png', alt: 'Oso', hint: 'bear cartoon' },
+  { id: 'rabbit', src: 'https://placehold.co/100x100.png', alt: 'Conejo', hint: 'rabbit cartoon' },
+  { id: 'fox', src: 'https://placehold.co/100x100.png', alt: 'Zorro', hint: 'fox cartoon' },
   { id: 'panda', src: 'https://placehold.co/100x100.png', alt: 'Panda', hint: 'panda cartoon' },
 ];
 
@@ -28,7 +28,7 @@ export function AvatarSelector({ selectedAvatar, onSelectAvatar }: AvatarSelecto
             'rounded-full p-1 border-4 border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
             selectedAvatar === avatar.id ? 'border-primary ring-2 ring-primary' : 'hover:border-accent'
           )}
-          aria-label={`Select ${avatar.alt} avatar`}
+          aria-label={`Seleccionar avatar ${avatar.alt}`}
         >
           <Image
             src={avatar.src}

@@ -11,8 +11,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'Numerix - Fun Math Learning',
-  description: 'Interactive math lessons for kids by Numerix',
+  title: 'Numerix - Aprendizaje Divertido de Matemáticas',
+  description: 'Lecciones interactivas de matemáticas para niños por Numerix',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={`${geistSans.variable} font-sans antialiased`}>
         <AppProviders>
           {children}

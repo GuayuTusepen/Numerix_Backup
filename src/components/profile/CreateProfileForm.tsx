@@ -20,16 +20,16 @@ import { useRouter } from "next/navigation";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "El nombre debe tener al menos 2 caracteres.",
   }).max(30, {
-    message: "Name must not be longer than 30 characters.",
+    message: "El nombre no debe tener más de 30 caracteres.",
   }),
-  age: z.coerce.number().min(3, { // Changed from string to number
-    message: "Age must be at least 3.",
+  age: z.coerce.number().min(3, {
+    message: "La edad debe ser al menos 3 años.",
   }).max(12, {
-    message: "Age must be at most 12.",
+    message: "La edad debe ser como máximo 12 años.",
   }),
-  avatar: z.string().min(1, { message: "Please select an avatar." }),
+  avatar: z.string().min(1, { message: "Por favor, selecciona un avatar." }),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -47,7 +47,7 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: "",
-      age: undefined, // Default to undefined for number input
+      age: undefined, 
       avatar: AVATARS[0]?.id || "",
     },
   });
@@ -56,28 +56,28 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
     if (profiles.length >= 3) {
       toast({
         variant: "destructive",
-        title: "Profile limit reached",
-        description: "You can only create up to 3 profiles.",
+        title: "Límite de perfiles alcanzado",
+        description: "Solo puedes crear hasta 3 perfiles.",
       });
       return;
     }
     try {
       const newProfile = addProfile(data);
       toast({
-        title: "Profile created!",
-        description: `Welcome, ${newProfile.name}!`,
+        title: "¡Perfil creado!",
+        description: `¡Bienvenido/a, ${newProfile.name}!`,
       });
       form.reset();
       if (onProfileCreated) {
         onProfileCreated();
       } else {
-        router.push('/dashboard'); // Default redirect if no callback
+        router.push('/dashboard'); 
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: (error as Error).message || "There was a problem creating your profile.",
+        title: "¡Oh, oh! Algo salió mal.",
+        description: (error as Error).message || "Hubo un problema al crear tu perfil.",
       });
     }
   }
@@ -90,7 +90,7 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
           name="avatar"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Choose Your Avatar</FormLabel>
+              <FormLabel>Elige Tu Avatar</FormLabel>
               <FormControl>
                 <AvatarSelector
                   selectedAvatar={field.value}
@@ -106,9 +106,9 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your name" {...field} />
+                <Input placeholder="Ingresa tu nombre" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,15 +119,15 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
           name="age"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Age</FormLabel>
+              <FormLabel>Edad</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Enter your age" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} />
+                <Input type="number" placeholder="Ingresa tu edad" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" size="lg">Create Profile</Button>
+        <Button type="submit" className="w-full" size="lg">Crear Perfil</Button>
       </form>
     </Form>
   );

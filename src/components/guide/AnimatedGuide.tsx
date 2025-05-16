@@ -9,11 +9,11 @@ interface AnimatedGuideProps {
 }
 
 const messages = [
-  "Hi there! Ready to learn something new?",
-  "Great job! Keep up the good work!",
-  "Numbers are fun, aren't they?",
-  "Let's explore the world of math together!",
-  "Don't worry if it's tricky, I'm here to help!"
+  "¡Hola! ¿Listo/a para aprender algo nuevo?",
+  "¡Excelente trabajo! ¡Sigue así!",
+  "Los números son divertidos, ¿verdad?",
+  "¡Exploremos juntos el mundo de las matemáticas!",
+  "No te preocupes si es difícil, ¡estoy aquí para ayudarte!"
 ];
 
 export function AnimatedGuide({ message: initialMessage }: AnimatedGuideProps) {
@@ -49,7 +49,7 @@ export function AnimatedGuide({ message: initialMessage }: AnimatedGuideProps) {
       <div className="bg-primary p-3 rounded-full shadow-lg animate-bounce">
         <Image 
           src="https://placehold.co/80x80.png" 
-          alt="Friendly Guide Character" 
+          alt="Guía Amigable" 
           width={80} 
           height={80} 
           className="rounded-full"

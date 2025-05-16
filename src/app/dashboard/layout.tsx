@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </main>
       <AnimatedGuide />
       <footer className="py-6 text-center text-sm text-muted-foreground border-t">
-        © {new Date().getFullYear()} Numerix. Happy Learning!
+        © {new Date().getFullYear()} Numerix. ¡Feliz Aprendizaje!
       </footer>
     </div>
   );

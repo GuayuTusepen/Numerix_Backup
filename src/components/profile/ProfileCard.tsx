@@ -10,8 +10,8 @@ import { Trash2, Edit3 } from 'lucide-react';
 interface ProfileCardProps {
   profile: Profile;
   onSelectProfile: (profileId: string) => void;
-  onDeleteProfile?: (profileId: string) => void; // Optional delete handler
-  onEditProfile?: (profile: Profile) => void; // Optional edit handler
+  onDeleteProfile?: (profileId: string) => void; 
+  onEditProfile?: (profile: Profile) => void; 
   isSelected?: boolean;
 }
 
@@ -32,22 +32,22 @@ export function ProfileCard({ profile, onSelectProfile, onDeleteProfile, onEditP
       </CardHeader>
       <CardContent className="text-center">
         <CardTitle className="text-2xl font-bold text-foreground">{profile.name}</CardTitle>
-        <p className="text-muted-foreground">Age: {profile.age}</p>
+        <p className="text-muted-foreground">Edad: {profile.age}</p>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 p-4">
         <Button onClick={() => onSelectProfile(profile.id)} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" size="lg">
-          Play as {profile.name}
+          Jugar como {profile.name}
         </Button>
         {(onDeleteProfile || onEditProfile) && (
           <div className="flex gap-2 w-full mt-2">
             {onEditProfile && (
               <Button variant="outline" size="sm" className="flex-1" onClick={() => onEditProfile(profile)}>
-                <Edit3 className="mr-2 h-4 w-4" /> Edit
+                <Edit3 className="mr-2 h-4 w-4" /> Editar
               </Button>
             )}
             {onDeleteProfile && (
               <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDeleteProfile(profile.id)}>
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
               </Button>
             )}
           </div>

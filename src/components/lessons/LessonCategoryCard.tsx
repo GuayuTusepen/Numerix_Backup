@@ -17,7 +17,7 @@ export function LessonCategoryCard({ category, onClick }: LessonCategoryCardProp
       onClick={onClick}
       tabIndex={0}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
-      aria-label={`Select category ${category.title}`}
+      aria-label={`Seleccionar categoría ${category.title}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-2xl font-bold text-primary">{category.title}</CardTitle>
@@ -33,7 +33,7 @@ export function LessonCategoryCard({ category, onClick }: LessonCategoryCardProp
       <CardContent>
         <CardDescription className="text-muted-foreground">{category.description}</CardDescription>
         <div className="flex items-center justify-end mt-4 text-sm text-accent font-medium">
-          Explore Lessons <ChevronRight className="h-4 w-4 ml-1" />
+          Explorar Lecciones <ChevronRight className="h-4 w-4 ml-1" />
         </div>
       </CardContent>
     </Card>
