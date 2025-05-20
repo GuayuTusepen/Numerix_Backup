@@ -1,12 +1,26 @@
 {
-  "theme_color": "#FFC857",
-  "background_color": "#FAF8F0",
-  "display": "standalone",
-  "scope": "/",
-  "start_url": "/",
   "name": "Numerix - Aprendizaje Divertido",
   "short_name": "Numerix",
   "description": "Lecciones interactivas de matemáticas para niños por Numerix.",
+  "id": "/numerix-app/",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#FAF8F0",
+  "theme_color": "#FFC857",
+  "scope": "/",
+  "lang": "es-ES",
+  "dir": "ltr",
+  "categories": [
+    "education",
+    "games",
+    "kids",
+    "books"
+  ],
+  "iarc_rating_id": "YOUR_IARC_RATING_ID_HERE",
   "icons": [
     {
       "src": "/icons/icon-any-192x192.png",
@@ -21,7 +35,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-any-512x512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -33,30 +47,27 @@
       "purpose": "maskable"
     }
   ],
-  "id": "/numerix-app/",
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "orientation": "portrait-primary",
   "screenshots": [
     {
       "src": "/screenshots/screenshot1.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Pantalla principal de Numerix"
+      "platform": "wide",
+      "label": "Pantalla de Bienvenida de Numerix"
     },
     {
       "src": "/screenshots/screenshot2.png",
-      "sizes": "720x1280",
+      "sizes": "1280x720",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Lección de ejemplo en Numerix"
+      "platform": "wide",
+      "label": "Selección de Lecciones de Numerix"
     }
   ],
-  "display_override": [
-    "window-controls-overlay"
-  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "edge_side_panel": {
     "preferred_width": 480
   },
@@ -64,20 +75,18 @@
     {
       "action": "/handle-file",
       "accept": {
-        "text/plain": [
-          ".txt"
-        ],
-        "application/vnd.numerix.lesson": [
-          ".numerix-lesson"
-        ],
-        "image/jpeg": [
-          ".jpg",
-          ".jpeg"
-        ],
-        "image/png": [
-          ".png"
-        ]
+        "text/plain": [".txt"],
+        "application/vnd.numerix.lesson": [".nlson"],
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"]
       },
+      "icons": [
+        {
+          "src": "/icons/icon-filehandler-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ],
       "launch_type": "single-client"
     }
   ],
@@ -85,23 +94,20 @@
   "protocol_handlers": [
     {
       "protocol": "web+numerix",
-      "url": "/protocol-handler?data=%s"
+      "url": "/protocol-handler?data=%s",
+      "icons": [
+        {
+          "src": "/icons/icon-protocol-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     }
   ],
-  "categories": [
-    "education",
-    "kids",
-    "games",
-    "mathematics"
-  ],
-  "dir": "ltr",
-  "lang": "es-ES",
-  "iarc_rating_id": "YOUR_IARC_RATING_ID_HERE",
-  "background": {
-    "service_worker": "/sw.js"
+  "service_worker": {
+    "src": "/sw.js"
   },
   "permissions": [
     "background-sync"
-  ],
-  "prefer_related_applications": false
+  ]
 }
