@@ -1,14 +1,12 @@
 {
+  "theme_color": "#FFC857",
+  "background_color": "#FAF8F0",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
   "name": "Numerix - Aprendizaje Divertido",
   "short_name": "Numerix",
   "description": "Lecciones interactivas de matemáticas para niños por Numerix.",
-  "id": "/numerix-app/",
-  "start_url": "/",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay"],
-  "background_color": "#FAF8F0",
-  "theme_color": "#FFC857",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-any-192x192.png",
@@ -35,33 +33,50 @@
       "purpose": "maskable"
     }
   ],
+  "id": "/numerix-app/",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "orientation": "portrait-primary",
   "screenshots": [
     {
       "src": "/screenshots/screenshot1.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "description": "Pantalla de inicio de Numerix"
+      "form_factor": "wide",
+      "label": "Pantalla principal de Numerix"
     },
     {
       "src": "/screenshots/screenshot2.png",
-      "sizes": "1280x720",
+      "sizes": "720x1280",
       "type": "image/png",
-      "description": "Ejemplo de lección de Numerix"
+      "form_factor": "narrow",
+      "label": "Lección de ejemplo en Numerix"
     }
   ],
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
+  "display_override": [
+    "window-controls-overlay"
+  ],
   "edge_side_panel": {
-    "preferred_width": 400
+    "preferred_width": 480
   },
   "file_handlers": [
     {
       "action": "/handle-file",
       "accept": {
-        "text/plain": [".txt", ".numerix-lesson"],
-        "image/jpeg": [".jpg", ".jpeg"],
-        "image/png": [".png"]
+        "text/plain": [
+          ".txt"
+        ],
+        "application/vnd.numerix.lesson": [
+          ".numerix-lesson"
+        ],
+        "image/jpeg": [
+          ".jpg",
+          ".jpeg"
+        ],
+        "image/png": [
+          ".png"
+        ]
       },
       "launch_type": "single-client"
     }
@@ -72,5 +87,21 @@
       "protocol": "web+numerix",
       "url": "/protocol-handler?data=%s"
     }
-  ]
+  ],
+  "categories": [
+    "education",
+    "kids",
+    "games",
+    "mathematics"
+  ],
+  "dir": "ltr",
+  "lang": "es-ES",
+  "iarc_rating_id": "YOUR_IARC_RATING_ID_HERE",
+  "background": {
+    "service_worker": "/sw.js"
+  },
+  "permissions": [
+    "background-sync"
+  ],
+  "prefer_related_applications": false
 }
