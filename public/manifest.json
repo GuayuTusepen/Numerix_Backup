@@ -1,0 +1,23 @@
+{
+  "name": "Numerix - Aprendizaje Divertido",
+  "short_name": "Numerix",
+  "description": "Lecciones interactivas de matemáticas para niños por Numerix",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F0",
+  "theme_color": "#FFC857",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
