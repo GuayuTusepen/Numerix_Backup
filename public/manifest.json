@@ -2,29 +2,23 @@
   "name": "Numerix - Aprendizaje Divertido",
   "short_name": "Numerix",
   "description": "Lecciones interactivas de matemáticas para niños por Numerix.",
-  "id": "/numerix-app/",
   "start_url": "/",
   "display": "standalone",
-  "display_override": [
-    "window-controls-overlay"
-  ],
-  "orientation": "portrait-primary",
+  "display_override": ["window-controls-overlay"],
   "background_color": "#FAF8F0",
   "theme_color": "#FFC857",
-  "scope": "/",
-  "lang": "es-ES",
-  "dir": "ltr",
-  "categories": [
-    "education",
-    "games",
-    "kids",
-    "books"
-  ],
-  "iarc_rating_id": "YOUR_IARC_RATING_ID_HERE",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-any-192x192.png",
       "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any",
+      "data_ai_hint": "app icon"
+    },
+    {
+      "src": "/icons/temporal_icon.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
@@ -32,42 +26,46 @@
       "src": "/icons/icon-maskable-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable",
+      "data_ai_hint": "app icon"
     },
     {
-      "src": "/icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-maskable-512x512.png",
+      "src": "/icons/temporal_icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/screenshot1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "platform": "wide",
-      "label": "Pantalla de Bienvenida de Numerix"
-    },
-    {
-      "src": "/screenshots/screenshot2.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "platform": "wide",
-      "label": "Selección de Lecciones de Numerix"
-    }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
+  "id": "/numerix-app/",
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Pantalla de Bienvenida de Numerix",
+      "form_factor": "narrow",
+      "data_ai_hint": "app screenshot"
+    },
+    {
+      "src": "/screenshots/screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Selección de Lección",
+      "form_factor": "narrow",
+      "data_ai_hint": "lesson selection"
+    },
+    {
+      "src": "/screenshots/screenshot_wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "Panel de Control en Escritorio",
+      "form_factor": "wide",
+      "data_ai_hint": "dashboard desktop"
+    }
+  ],
   "edge_side_panel": {
     "preferred_width": 480
   },
@@ -76,13 +74,13 @@
       "action": "/handle-file",
       "accept": {
         "text/plain": [".txt"],
-        "application/vnd.numerix.lesson": [".nlson"],
+        "application/vnd.numerix-lesson": [".numerix-lesson", ".nlson"],
         "image/jpeg": [".jpg", ".jpeg"],
         "image/png": [".png"]
       },
       "icons": [
         {
-          "src": "/icons/icon-filehandler-512x512.png",
+          "src": "/icons/temporal_icon.png",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -94,20 +92,25 @@
   "protocol_handlers": [
     {
       "protocol": "web+numerix",
-      "url": "/protocol-handler?data=%s",
-      "icons": [
-        {
-          "src": "/icons/icon-protocol-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ]
+      "url": "/protocol-handler?data=%s"
     }
   ],
-  "service_worker": {
-    "src": "/sw.js"
+  "background": {
+    "service_worker": "/sw.js",
+    "scripts": ["/sw.js"]
   },
   "permissions": [
     "background-sync"
-  ]
+  ],
+  "categories": [
+    "education",
+    "games",
+    "kids",
+    "mathematics"
+  ],
+  "dir": "ltr",
+  "iarc_rating_id": "YOUR_IARC_RATING_ID_HERE",
+  "lang": "es-ES",
+  "prefer_related_applications": false,
+  "related_applications": []
 }
