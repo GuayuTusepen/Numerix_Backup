@@ -4,12 +4,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Lottie from 'lottie-react'; 
+// Lottie ya no es necesario aquí
 import { useProfile } from '@/contexts/ProfileContext';
 import { CreateProfileForm } from '@/components/profile/CreateProfileForm';
 import { ProfileCard } from '@/components/profile/ProfileCard';
 import { Logo } from '@/components/Logo';
-import { UserCheck, Users } from 'lucide-react'; 
+import { Users } from 'lucide-react'; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
@@ -83,13 +83,20 @@ export default function ProfilesPage() {
         <DialogTrigger asChild>
           {profiles.length < 3 && (
             <div 
-              className="cursor-pointer transition-transform hover:scale-105 flex flex-col items-center rounded-lg shadow-lg p-3" // Clases de fondo y texto de acento eliminadas
+              className="cursor-pointer transition-transform hover:scale-105 flex flex-col items-center rounded-lg shadow-lg p-3"
               role="button"
               tabIndex={0}
               aria-label="Crear Nuevo Perfil"
             >
-              <Lottie path="/animations/Animation_create_account.json" loop={true} style={{ width: 100, height: 100 }} />
-              <span className="mt-1 text-md font-semibold text-foreground">Crear Nuevo Perfil</span> {/* Color de texto ajustado si es necesario */}
+              <Image
+                src="/animations/Animation_create_account.gif" 
+                alt="Crear Nuevo Perfil Animación"
+                width={100} // Puedes ajustar esto según el tamaño de tu GIF
+                height={100} // Puedes ajustar esto según el tamaño de tu GIF
+                unoptimized // Importante para GIFs
+                data-ai-hint="create profile animation"
+              />
+              {/* Texto eliminado según la solicitud */}
             </div>
           )}
         </DialogTrigger>
@@ -118,4 +125,3 @@ export default function ProfilesPage() {
     </div>
   );
 }
-
