@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -13,7 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAppLoading(false);
-    }, 2000); // Splash screen duration
+    }, 5000); // Cambiado de 2000 a 5000 milisegundos (5 segundos)
 
     return () => clearTimeout(timer);
   }, []);
@@ -35,3 +36,4 @@ export default function HomePage() {
 
   return <SplashScreen />;
 }
+
