@@ -15,11 +15,11 @@ export function SplashScreen() {
       {/* Replace the <p> tag with the Image component for the GIF */}
       <div className="mt-6"> {/* Added a little margin-top for spacing */}
         <Image
-          src="/animations/loading-spinner.gif" // Path to your GIF in the public folder
+          src="/animations/Loading.gif" // Path to your GIF in the public folder
           alt="Cargando animación"
           width={80} // Adjust width as needed
           height={80} // Adjust height as needed
-          unoptimized // Recommended for GIFs to prevent optimization 변경 that might break animation
+          unoptimized // Recommended for GIFs to prevent optimization that might break animation
           data-ai-hint="loading spinner animation"
         />
       </div>
