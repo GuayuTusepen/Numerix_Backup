@@ -4,13 +4,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Lottie from 'lottie-react'; // Import Lottie
+import Lottie from 'lottie-react'; 
 import { useProfile } from '@/contexts/ProfileContext';
 import { CreateProfileForm } from '@/components/profile/CreateProfileForm';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-// import { Button } from '@/components/ui/button'; // No longer needed for this button
 import { Logo } from '@/components/Logo';
-import { UserCheck, Users } from 'lucide-react'; // PlusCircle removed as it's replaced
+import { UserCheck, Users } from 'lucide-react'; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
@@ -84,14 +83,13 @@ export default function ProfilesPage() {
         <DialogTrigger asChild>
           {profiles.length < 3 && (
             <div 
-              className="cursor-pointer transition-transform hover:scale-105 flex flex-col items-center bg-accent hover:bg-accent/90 text-accent-foreground rounded-lg shadow-lg p-3"
+              className="cursor-pointer transition-transform hover:scale-105 flex flex-col items-center rounded-lg shadow-lg p-3" // Clases de fondo y texto de acento eliminadas
               role="button"
               tabIndex={0}
               aria-label="Crear Nuevo Perfil"
-              // onClick and onKeyDown for dialog trigger are handled by DialogTrigger asChild
             >
               <Lottie path="/animations/Animation_create_account.json" loop={true} style={{ width: 100, height: 100 }} />
-              <span className="mt-1 text-md font-semibold">Crear Nuevo Perfil</span>
+              <span className="mt-1 text-md font-semibold text-foreground">Crear Nuevo Perfil</span> {/* Color de texto ajustado si es necesario */}
             </div>
           )}
         </DialogTrigger>
@@ -120,3 +118,4 @@ export default function ProfilesPage() {
     </div>
   );
 }
+
