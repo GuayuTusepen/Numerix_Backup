@@ -1,10 +1,10 @@
-"use client";
+"use client"; // Added to use useEffect
 
 import { Geist } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/AppProviders';
 import { Toaster } from '@/components/ui/toaster';
-import { useEffect } from 'react';
+import { useEffect } from 'react'; // For Service Worker
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
