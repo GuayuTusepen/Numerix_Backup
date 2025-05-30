@@ -1,4 +1,4 @@
-"use client"; // Added to use useEffect
+"use client"; // Added to use useEffect for Service Worker
 
 import { Geist } from 'next/font/google';
 import './globals.css';
@@ -59,12 +59,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#FFC857" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover" />
-        <link rel="apple-touch-icon" href="/icons/temporal_icon.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png" data-ai-hint="app icon" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png" data-ai-hint="app icon" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167x167.png" data-ai-hint="app icon" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" data-ai-hint="app icon" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" data-ai-hint="app icon" />
+        <link rel="apple-touch-icon" href="/icons/temporal_icon.png" data-ai-hint="app icon" />
+        <link rel="apple-touch-icon" sizes="152x152" href="https://placehold.co/152x152.png" data-ai-hint="app icon" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://placehold.co/180x180.png" data-ai-hint="app icon" />
+        <link rel="apple-touch-icon" sizes="167x167" href="https://placehold.co/167x167.png" data-ai-hint="app icon" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://placehold.co/32x32.png" data-ai-hint="app icon" />
+        <link rel="icon" type="image/png" sizes="16x16" href="https://placehold.co/16x16.png" data-ai-hint="app icon" />
       </head>
       <body className={`${geistSans.variable} font-sans antialiased`}>
         <AppProviders>
