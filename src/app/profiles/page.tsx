@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-// Lottie ya no es necesario aquí
 import { useProfile } from '@/contexts/ProfileContext';
 import { CreateProfileForm } from '@/components/profile/CreateProfileForm';
 import { ProfileCard } from '@/components/profile/ProfileCard';
@@ -91,9 +90,10 @@ export default function ProfilesPage() {
               <Image
                 src="/animations/Animation_create_account.gif" 
                 alt="Crear Nuevo Perfil Animación"
-                width={240} 
-                height={240} 
+                width={1070} // Intrinsic width of the GIF
+                height={280} // Intrinsic height of the GIF
                 unoptimized 
+                className="max-w-[240px] h-auto" // Control displayed size, maintain aspect ratio
                 data-ai-hint="create profile animation"
               />
             </div>
