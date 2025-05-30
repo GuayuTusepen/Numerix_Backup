@@ -42,7 +42,7 @@ export default function ProfilesPage() {
         <div className="mt-6">
           <Image
             src="/animations/Loading.gif"
-            alt="Cargando animación"
+            alt="Animación de carga de perfiles" // Changed alt text
             width={80}
             height={80}
             unoptimized

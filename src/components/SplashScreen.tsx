@@ -17,7 +17,7 @@ export function SplashScreen() {
       <div className="mt-6"> {/* Some top margin to space it from the logo */}
         <Image
           src="/animations/Loading.gif" // Path to your GIF in the public/animations/ folder
-          alt="Cargando animación"
+          alt="Animación de Numerix" // Changed alt text for diagnostics
           width={80} // Width of the GIF
           height={80} // Height of the GIF
           unoptimized // Important for GIFs to prevent optimization that might break the animation
