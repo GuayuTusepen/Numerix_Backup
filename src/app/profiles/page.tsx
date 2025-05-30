@@ -3,13 +3,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'; // Importar Image
+import Image from 'next/image';
+import Lottie from 'lottie-react'; // Import Lottie
 import { useProfile } from '@/contexts/ProfileContext';
 import { CreateProfileForm } from '@/components/profile/CreateProfileForm';
 import { ProfileCard } from '@/components/profile/ProfileCard';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button'; // No longer needed for this button
 import { Logo } from '@/components/Logo';
-import { PlusCircle, UserCheck, Users } from 'lucide-react';
+import { UserCheck, Users } from 'lucide-react'; // PlusCircle removed as it's replaced
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
@@ -56,7 +57,7 @@ export default function ProfilesPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-primary/30 via-background to-accent/30 p-4">
       <header className="mb-12 text-center">
-        <div className="animate-bounce inline-block"> {/* Added animate-bounce and inline-block for proper centering */}
+        <div className="animate-bounce inline-block">
           <Logo size="lg" />
         </div>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
@@ -82,9 +83,16 @@ export default function ProfilesPage() {
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
         <DialogTrigger asChild>
           {profiles.length < 3 && (
-             <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full shadow-lg transition-transform hover:scale-105">
-              <PlusCircle className="mr-2 h-6 w-6" /> Crear Nuevo Perfil
-            </Button>
+            <div 
+              className="cursor-pointer transition-transform hover:scale-105 flex flex-col items-center bg-accent hover:bg-accent/90 text-accent-foreground rounded-lg shadow-lg p-3"
+              role="button"
+              tabIndex={0}
+              aria-label="Crear Nuevo Perfil"
+              // onClick and onKeyDown for dialog trigger are handled by DialogTrigger asChild
+            >
+              <Lottie path="/animations/Animation_create_account.json" loop={true} style={{ width: 100, height: 100 }} />
+              <span className="mt-1 text-md font-semibold">Crear Nuevo Perfil</span>
+            </div>
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] bg-card rounded-xl">
@@ -93,14 +101,13 @@ export default function ProfilesPage() {
           </DialogHeader>
           <CreateProfileForm onProfileCreated={() => {
             setShowCreateForm(false);
-            // No automatic redirect here, selection is explicit or via HomePage logic if last profile was deleted.
           }} />
         </DialogContent>
       </Dialog>
 
       {profiles.length === 0 && !showCreateForm && (
         <p className="mt-4 text-muted-foreground">
-          ¡Haz clic en el botón de arriba para empezar!
+          ¡Haz clic en la animación de arriba para empezar!
         </p>
       )}
 
