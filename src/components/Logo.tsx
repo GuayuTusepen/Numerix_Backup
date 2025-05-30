@@ -12,7 +12,7 @@ export function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   return (
     <div className="flex items-center" data-ai-hint="Numerix app logo">
       <Image
-        src="/Logos/NumerixLogo.png" // Assuming this will be the path to your new logo
+        src="/Logos/logo_numerix.png" // Updated filename
         alt="Numerix Logo"
         width={selectedSize.width}
         height={selectedSize.height}
