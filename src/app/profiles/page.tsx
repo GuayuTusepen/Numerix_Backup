@@ -1,7 +1,9 @@
+
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Importar Image
 import { useProfile } from '@/contexts/ProfileContext';
 import { CreateProfileForm } from '@/components/profile/CreateProfileForm';
 import { ProfileCard } from '@/components/profile/ProfileCard';
@@ -34,8 +36,19 @@ export default function ProfilesPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-        <Logo size="lg" />
-        <p className="mt-4 text-xl text-foreground">Cargando perfiles...</p>
+        <div className="animate-bounce">
+          <Logo size="lg" />
+        </div>
+        <div className="mt-6">
+          <Image
+            src="/animations/Loading.gif"
+            alt="Cargando animación"
+            width={80}
+            height={80}
+            unoptimized
+            data-ai-hint="loading spinner animation"
+          />
+        </div>
       </div>
     );
   }
