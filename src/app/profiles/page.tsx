@@ -42,7 +42,7 @@ export default function ProfilesPage() {
         <div className="mt-6">
           <Image
             src="/animations/Loading.gif"
-            alt="Animación de carga de perfiles" // Changed alt text
+            alt="Animación de carga de perfiles"
             width={80}
             height={80}
             unoptimized
@@ -56,7 +56,9 @@ export default function ProfilesPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-primary/30 via-background to-accent/30 p-4">
       <header className="mb-12 text-center">
-        <Logo size="lg" />
+        <div className="animate-bounce inline-block"> {/* Added animate-bounce and inline-block for proper centering */}
+          <Logo size="lg" />
+        </div>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
           {profiles.length > 0 ? '¿Quién Aprende Hoy?' : '¡Crea Tu Primer Perfil!'}
         </h1>
