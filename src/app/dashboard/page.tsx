@@ -53,6 +53,7 @@ export default function DashboardPage() {
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
             ¡{greeting}, {activeProfile.name}!
           </span>
+          <span className="text-2xl align-super text-muted-foreground ml-2">Beta</span>
         </h1>
         <p className="text-xl text-muted-foreground flex items-center justify-center">
           <Sparkles className="mr-2 h-6 w-6 text-yellow-400" />
