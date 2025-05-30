@@ -13,7 +13,7 @@ export function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   return (
     <div className="flex items-center" data-ai-hint="Numerix app logo">
       <Image
-        src="/Logos%20/logo_numerix.png" // Ruta actualizada para reflejar el espacio
+        src="/Logos/logo_numerix.png" // Ruta actualizada SIN el espacio
         alt="Numerix Logo"
         width={selectedSize.width}
         height={selectedSize.height}
