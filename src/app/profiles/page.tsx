@@ -91,12 +91,11 @@ export default function ProfilesPage() {
               <Image
                 src="/animations/Animation_create_account.gif" 
                 alt="Crear Nuevo Perfil Animación"
-                width={100} // Puedes ajustar esto según el tamaño de tu GIF
-                height={100} // Puedes ajustar esto según el tamaño de tu GIF
-                unoptimized // Importante para GIFs
+                width={240} 
+                height={240} 
+                unoptimized 
                 data-ai-hint="create profile animation"
               />
-              {/* Texto eliminado según la solicitud */}
             </div>
           )}
         </DialogTrigger>
