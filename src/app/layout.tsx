@@ -1,11 +1,11 @@
 
-"use client"; // Added to use useEffect for Service Worker
+"use client";
 
 import { Geist } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/AppProviders';
 import { Toaster } from '@/components/ui/toaster';
-import { useEffect } from 'react'; // For Service Worker
+import { useEffect } from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,21 +32,18 @@ export default function RootLayout({
         <title>Numerix - Aprendizaje Divertido de Matemáticas</title>
         <meta name="description" content="Lecciones interactivas de matemáticas para niños por Numerix" />
         <link rel="manifest" href="/manifest.json" />
-        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://your-app-url.com" /> {/* TODO: Replace with actual URL when deployed */}
+        <meta property="og:url" content="https://your-app-url.com" />
         <meta property="og:title" content="Numerix - Aprendizaje Divertido de Matemáticas" />
         <meta property="og:description" content="Lecciones interactivas de matemáticas para niños." />
         <meta property="og:image" content="/icons/temporal_icon.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
         <meta property="og:image:alt" content="Logo de Numerix" />
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Numerix - Aprendizaje Divertido de Matemáticas" />
         <meta name="twitter:description" content="Lecciones interactivas de matemáticas para niños." />
         <meta name="twitter:image" content="/icons/temporal_icon.png" />
-        {/* PWA specific meta tags */}
         <meta name="application-name" content="Numerix" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -75,3 +72,4 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
