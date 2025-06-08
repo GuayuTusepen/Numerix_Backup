@@ -1,3 +1,4 @@
+
 "use client"; // Added to use useEffect for Service Worker
 
 import { Geist } from 'next/font/google';
