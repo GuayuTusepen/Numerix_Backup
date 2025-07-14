@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,7 +54,7 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: "",
-      age: undefined,
+      age: '' as any, // Use empty string for controlled input
       gender: undefined, 
       avatar: "", // Initial avatar is empty
     },
@@ -132,7 +133,7 @@ export function CreateProfileForm({ onProfileCreated }: CreateProfileFormProps) 
             <FormItem>
               <FormLabel>Edad</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Ingresa tu edad" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} />
+                <Input type="number" placeholder="Ingresa tu edad" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
