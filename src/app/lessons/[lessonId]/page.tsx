@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useParams, useRouter } from 'next/navigation';
@@ -10,8 +11,9 @@ import { ArrowLeft, CheckCircle, Star, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import CountingGame from '@/components/lessons/games/CountingGame';
 
-// Placeholder for actual lesson content components
+// Placeholder for other lesson content components
 function LessonContentPlaceholder({ lesson }: { lesson: Lesson }) {
   return (
     <div className="p-6 bg-muted/30 rounded-lg min-h-[200px] flex flex-col items-center justify-center text-center">
@@ -31,13 +33,21 @@ export default function LessonPage() {
   const lessonId = params.lessonId as string;
   
   const { updateLessonProgress, getLessonProgress } = useProgress();
-  const [starsAwarded, setStarsAwarded] = useState<0 | 1 | 2 | 3>(0);
-
+  
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
-
-  useEffect(() => {
-    setStarsAwarded(getLessonProgress(lessonId)?.stars || 0);
-  }, [lessonId, getLessonProgress]);
+  
+  const handleCompleteLesson = (stars: 1 | 2 | 3) => {
+    updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
+    toast({
+      title: "¡Lección Completada!",
+      description: `Ganaste ${stars} estrella(s) por "${lesson?.title}". ¡Buen trabajo!`,
+      action: (
+        <Button size="sm" onClick={() => router.push('/dashboard')}>
+          ¡Siguiente Aventura!
+        </Button>
+      ),
+    });
+  };
 
   if (!lesson) {
     return (
@@ -52,23 +62,33 @@ export default function LessonPage() {
       </div>
     );
   }
-
-  const handleCompleteLesson = () => {
-    const randomStars = Math.floor(Math.random() * 3) + 1 as 1 | 2 | 3;
-    setStarsAwarded(randomStars);
-    updateLessonProgress(lesson.id, { completed: true, stars: randomStars, lastAttempted: new Date().toISOString() });
-    toast({
-      title: "¡Lección Completada!",
-      description: `Ganaste ${randomStars} estrella(s) por "${lesson.title}". ¡Buen trabajo!`,
-      action: (
-        <Button size="sm" onClick={() => router.push('/dashboard')}>
-          ¡Siguiente Aventura!
-        </Button>
-      ),
-    });
-  };
   
   const currentProgress = getLessonProgress(lessonId);
+
+  // Define which content to render based on the lesson ID
+  const renderLessonContent = () => {
+    if (lesson.id === 'count-to-10') {
+      return <CountingGame onLevelComplete={handleCompleteLesson} />;
+    }
+    
+    // Default interactive content for other lessons
+    return (
+      <>
+        <LessonContentPlaceholder lesson={lesson} />
+        <CardFooter className="p-6 md:p-8 bg-muted/30">
+          <Button 
+            size="lg" 
+            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
+            onClick={() => handleCompleteLesson( (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3) )}
+            disabled={currentProgress?.completed && currentProgress.stars === 3}
+          >
+            {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
+          </Button>
+        </CardFooter>
+      </>
+    );
+  };
+
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -82,11 +102,9 @@ export default function LessonPage() {
           <CardDescription className="text-lg text-primary-foreground/90 text-center mt-1">{lesson.description}</CardDescription>
         </CardHeader>
 
-        <CardContent className="p-6 md:p-8 space-y-6">
-          <LessonContentPlaceholder lesson={lesson} />
-
-          {currentProgress?.completed && (
-             <div className="mt-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md text-green-700">
+        <CardContent className="p-0 sm:p-0">
+          {currentProgress?.completed && lesson.id !== 'count-to-10' && (
+             <div className="m-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md text-green-700">
                 <div className="flex items-center">
                   <CheckCircle className="h-6 w-6 mr-3" />
                   <div>
@@ -103,18 +121,8 @@ export default function LessonPage() {
                 </div>
             </div>
           )}
+          {renderLessonContent()}
         </CardContent>
-
-        <CardFooter className="p-6 md:p-8 bg-muted/30">
-          <Button 
-            size="lg" 
-            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
-            onClick={handleCompleteLesson}
-            disabled={currentProgress?.completed && currentProgress.stars === 3}
-          >
-            {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

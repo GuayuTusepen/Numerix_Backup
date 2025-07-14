@@ -1,0 +1,436 @@
+
+.counting-game {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .game-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Menu Styles */
+  .menu-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.5s ease-out;
+  }
+  
+  .game-title {
+    font-size: 2.5rem;
+    color: #4a90e2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+  
+  .game-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  /* Level Card Styles */
+  .level-card {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .level-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  }
+  
+  .level-card.completed {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  
+  .level-card.completed::before {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  
+  .level-stars-display {
+    display: flex;
+    gap: 2px;
+  }
+  
+  .level-stars-display .star {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .level-info {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .level-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+  }
+  
+  .level-description {
+    color: #666;
+    margin: 8px 0 5px 0;
+  }
+  
+  .level-range {
+    font-weight: bold;
+    color: #4a90e2;
+    margin-bottom: 10px;
+  }
+  
+  .level-status {
+    margin-top: 8px;
+  }
+  
+  .level-button {
+    width: 100%;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    padding: 12px 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  .level-button:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Game Styles */
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .game-info {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .score-display {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+  
+  .progress-bar {
+    margin-bottom: 20px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  
+  .game-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.5s ease-out;
+  }
+  
+  .question-title {
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .fruits-container {
+    position: relative;
+    height: 300px;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    border-radius: 15px;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+  
+  .fruit-item {
+    position: absolute;
+    animation: bounce 0.6s ease-out;
+  }
+  
+  .fruit-emoji {
+    font-size: 3rem;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .fruit-emoji:hover {
+    transform: scale(1.2);
+  }
+  
+  .answers-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .answer-button {
+    min-width: 80px;
+    height: 80px;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    border: 3px solid #ff9a9e;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .answer-button:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .answer-button.correct {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-color: #4facfe;
+    color: white;
+    animation: pulse 0.5s ease-out;
+  }
+  
+  .answer-button.incorrect {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    border-color: #ff6b6b;
+    color: white;
+    animation: shake 0.5s ease-out;
+  }
+  
+  .answer-button.correct-answer {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-color: #4facfe;
+    color: white;
+    animation: pulse 0.5s ease-out;
+  }
+  
+  .result-message {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    animation: slideIn 0.5s ease-out;
+  }
+  
+  .result-message.correct {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+  
+  .result-message.incorrect {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: white;
+  }
+  
+  /* Completion Styles */
+  .completion-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.5s ease-out;
+  }
+  
+  .completion-title {
+    font-size: 2.2rem;
+    color: #4a90e2;
+    margin-bottom: 20px;
+  }
+  
+  .stars-display {
+    margin-bottom: 20px;
+  }
+  
+  .star {
+    font-size: 3rem;
+    margin: 0 5px;
+    animation: bounce 0.6s ease-out;
+  }
+  
+  .star.filled {
+    animation: starGlow 0.8s ease-out;
+  }
+  
+  .star.empty {
+    opacity: 0.3;
+  }
+  
+  .completion-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+  
+  .stat-label {
+    font-weight: bold;
+    color: #666;
+  }
+  
+  .stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a90e2;
+  }
+  
+  .stat-item.performance .stat-value.perfect {
+    color: #4facfe;
+    font-weight: bold;
+  }
+  
+  .stat-item.performance .stat-value.good {
+    color: #ffa500;
+    font-weight: bold;
+  }
+  
+  .stat-item.performance .stat-value.needs-improvement {
+    color: #ff6b6b;
+    font-weight: bold;
+  }
+  
+  .action-button.next-level {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-color: #4facfe;
+  }
+  
+  .action-button.next-level:hover {
+    background: linear-gradient(135deg, #0073e6 0%, #00b8d4 100%);
+  }
+  
+  .completion-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .action-button {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+  }
+  
+  .action-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .action-button.secondary {
+    background: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  /* Animations */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes bounce {
+    0% { transform: translateY(0) scale(0); }
+    50% { transform: translateY(-10px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  
+  @keyframes bounce-in {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  @keyframes starGlow {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .game-title {
+      font-size: 2rem;
+    }
+    
+    .fruits-container {
+      height: 250px;
+    }
+    
+    .fruit-emoji {
+      font-size: 2.5rem;
+    }
+    
+    .answer-button {
+      min-width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+    }
+    
+    .completion-actions {
+      flex-direction: column;
+    }
+  }
+  
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out forwards;
+    opacity: 0;
+  }
