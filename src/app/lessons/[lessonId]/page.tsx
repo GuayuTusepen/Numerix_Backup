@@ -53,26 +53,32 @@ export default function LessonPage() {
       const gameStorageKey = `countingGameProgress_${activeProfile.id}`;
       const gameProgress = getLocalStorageItem<any>(gameStorageKey, {});
       const totalLevels = gameData.levels.length;
-      let perfectLevels = 0;
-      let completedLevels = 0;
-
-      for (let i = 1; i <= totalLevels; i++) {
-        if (gameProgress[i]?.completed) {
-            completedLevels++;
-        }
-        if (gameProgress[i]?.stars === 3) {
-          perfectLevels++;
+      
+      // Correct logic to check if all levels are perfect
+      let allLevelsArePerfect = true;
+      let completedLevelsCount = 0;
+      if (totalLevels === 0) {
+        allLevelsArePerfect = false; // No levels, no perfection.
+      } else {
+        for (const level of gameData.levels) {
+          const levelProgress = gameProgress[level.id];
+          if (!levelProgress || levelProgress.stars !== 3) {
+            allLevelsArePerfect = false;
+          }
+          if (levelProgress?.completed) {
+            completedLevelsCount++;
+          }
         }
       }
 
       let overallStars: 1 | 2 | 3 = 1;
-      if (perfectLevels === totalLevels) {
+      if (allLevelsArePerfect) {
         overallStars = 3; 
-      } else if (completedLevels > 0) {
+      } else if (completedLevelsCount > 0) {
         overallStars = 2; 
       }
 
-      updateLessonProgress(lessonId, { completed: completedLevels > 0, stars: overallStars, lastAttempted: new Date().toISOString() });
+      updateLessonProgress(lessonId, { completed: completedLevelsCount > 0, stars: overallStars, lastAttempted: new Date().toISOString() });
       toast({
         title: "¡Progreso Guardado!",
         description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
