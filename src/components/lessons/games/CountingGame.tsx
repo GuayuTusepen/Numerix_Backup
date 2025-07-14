@@ -9,12 +9,14 @@ import { Progress } from '@/components/ui/progress';
 import { gameData } from '@/data/countingGameData';
 import './CountingGame.css';
 import { Volume2, VolumeX } from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
 
 interface CountingGameProps {
   onGameExit: () => void;
 }
 
 const CountingGame = ({ onGameExit }: CountingGameProps) => {
+  const { activeProfile } = useProfile();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -27,18 +29,23 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
   const [isMuted, setIsMuted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const storageKey = activeProfile ? `countingGameProgress_${activeProfile.id}` : null;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedProgress = localStorage.getItem('countingGameProgress');
-      if (savedProgress) {
-        setLevelProgress(JSON.parse(savedProgress));
+      if (storageKey) {
+        const savedProgress = localStorage.getItem(storageKey);
+        if (savedProgress) {
+          setLevelProgress(JSON.parse(savedProgress));
+        } else {
+          setLevelProgress({});
+        }
       }
       // Aseguramos que audioRef.current sea una instancia de Audio solo en el cliente
       audioRef.current = new Audio('/sounds/Music_Cout_to_10.mp3');
       audioRef.current.loop = true;
     }
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -59,8 +66,8 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
   };
 
   const saveProgress = (level: number, starsEarned: number) => {
+    if (!storageKey) return;
     const currentProgress = levelProgress[level] || { stars: 0 };
-    // Solo actualiza si las nuevas estrellas son más que las anteriores
     if (starsEarned > currentProgress.stars) {
         const newProgress = {
           ...levelProgress,
@@ -72,13 +79,12 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
         };
         setLevelProgress(newProgress);
         if (typeof window !== 'undefined') {
-          localStorage.setItem('countingGameProgress', JSON.stringify(newProgress));
+          localStorage.setItem(storageKey, JSON.stringify(newProgress));
         }
     }
   };
 
   const playSound = (soundType: string) => {
-    // Mock function
     console.log(`🔊 Playing ${soundType} sound`);
   };
 
@@ -122,22 +128,22 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     }
 
     setTimeout(() => {
-      nextQuestion();
+      nextQuestion(isCorrect);
     }, 2000);
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = (isCorrect: boolean) => {
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      completeLevel();
+      completeLevel(isCorrect ? correctAnswers + 1 : correctAnswers);
     }
   };
-
-  const completeLevel = () => {
-    const accuracy = correctAnswers / totalQuestions;
+  
+  const completeLevel = (finalCorrectAnswers: number) => {
+    const accuracy = finalCorrectAnswers / totalQuestions;
     let earnedStars: 1 | 2 | 3 = 1;
     
     if (accuracy === 1) {
@@ -148,9 +154,7 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     
     setStars(earnedStars);
     setGameState('completed');
-    
     saveProgress(currentLevel, earnedStars);
-    
     playSound('level_complete');
   };
 

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
 import { gameData } from '@/data/countingGameData'; // Importar los datos del juego
 import { getLocalStorageItem } from '@/lib/localStorage';
+import { useProfile } from '@/contexts/ProfileContext';
 
 // Placeholder for other lesson content components
 function LessonContentPlaceholder({ lesson }: { lesson: Lesson }) {
@@ -32,6 +33,7 @@ export default function LessonPage() {
   const router = useRouter();
   const params = useParams();
   const { toast } = useToast();
+  const { activeProfile } = useProfile();
   const lessonId = params.lessonId as string;
   
   const { updateLessonProgress, getLessonProgress } = useProgress();
@@ -39,13 +41,25 @@ export default function LessonPage() {
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
   
   const handleCompleteLesson = () => {
-    // Nueva lógica para la lección de contar
     if (lessonId === 'count-to-10') {
-      const gameProgress = getLocalStorageItem<any>('countingGameProgress', {});
+        if (!activeProfile) {
+            toast({
+                variant: "destructive",
+                title: "Error de perfil",
+                description: "No se encontró un perfil activo para guardar el progreso.",
+            });
+            return;
+        }
+      const gameStorageKey = `countingGameProgress_${activeProfile.id}`;
+      const gameProgress = getLocalStorageItem<any>(gameStorageKey, {});
       const totalLevels = gameData.levels.length;
       let perfectLevels = 0;
+      let completedLevels = 0;
 
       for (let i = 1; i <= totalLevels; i++) {
+        if (gameProgress[i]?.completed) {
+            completedLevels++;
+        }
         if (gameProgress[i]?.stars === 3) {
           perfectLevels++;
         }
@@ -53,18 +67,17 @@ export default function LessonPage() {
 
       let overallStars: 1 | 2 | 3 = 1;
       if (perfectLevels === totalLevels) {
-        overallStars = 3; // Todas las lecciones con 3 estrellas
-      } else if (Object.keys(gameProgress).length > 0) {
-        overallStars = 2; // Al menos un nivel completado
+        overallStars = 3; 
+      } else if (completedLevels > 0) {
+        overallStars = 2; 
       }
 
-      updateLessonProgress(lessonId, { completed: true, stars: overallStars, lastAttempted: new Date().toISOString() });
+      updateLessonProgress(lessonId, { completed: completedLevels > 0, stars: overallStars, lastAttempted: new Date().toISOString() });
       toast({
         title: "¡Progreso Guardado!",
         description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
       });
     } else {
-      // Lógica anterior para otras lecciones
       const stars = (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3);
       updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
       toast({
@@ -91,13 +104,11 @@ export default function LessonPage() {
   
   const currentProgress = getLessonProgress(lessonId);
 
-  // Define which content to render based on the lesson ID
   const renderLessonContent = () => {
     if (lesson.id === 'count-to-10') {
       return <CountingGame onGameExit={handleCompleteLesson} />;
     }
     
-    // Default interactive content for other lessons
     return (
       <>
         <LessonContentPlaceholder lesson={lesson} />
@@ -105,7 +116,7 @@ export default function LessonPage() {
           <Button 
             size="lg" 
             className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
-            onClick={() => handleCompleteLesson()} // Usa la lógica unificada
+            onClick={() => handleCompleteLesson()}
             disabled={currentProgress?.completed && currentProgress.stars === 3}
           >
             {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
