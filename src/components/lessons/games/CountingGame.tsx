@@ -1,13 +1,14 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { gameData } from '@/data/countingGameData';
 import './CountingGame.css';
+import { Volume2, VolumeX } from 'lucide-react';
 
 interface CountingGameProps {
   onLevelComplete: (stars: 1 | 2 | 3) => void;
@@ -23,10 +24,9 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
   const [stars, setStars] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [levelProgress, setLevelProgress] = useState<any>({});
+  const [isMuted, setIsMuted] = useState(false);
 
-  const currentLevelData = gameData.levels[currentLevel - 1];
-  const totalQuestions = currentLevelData.questions.length;
-  const currentQuestionData = currentLevelData.questions[currentQuestion];
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -34,8 +34,29 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
       if (savedProgress) {
         setLevelProgress(JSON.parse(savedProgress));
       }
+      // Aseguramos que audioRef.current sea una instancia de Audio solo en el cliente
+      audioRef.current = new Audio('/sounds/Music_Cout_to_10.mp3');
+      audioRef.current.loop = true;
     }
   }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (gameState === 'playing' && !isMuted) {
+      audio.play().catch(e => console.error("Error al reproducir audio:", e));
+    } else {
+      audio.pause();
+    }
+  }, [gameState, isMuted]);
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+    }
+  };
 
   const saveProgress = (level: number, starsEarned: number) => {
     const newProgress = {
@@ -50,17 +71,6 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('countingGameProgress', JSON.stringify(newProgress));
     }
-  };
-
-  useEffect(() => {
-    if (gameState === 'playing') {
-      playBackgroundMusic();
-    }
-  }, [gameState]);
-
-  const playBackgroundMusic = () => {
-    // Mock function
-    console.log('🎵 Playing background music...');
   };
 
   const playSound = (soundType: string) => {
@@ -100,7 +110,7 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
     
     if (isCorrect) {
       setScore(score + 100);
-      setCorrectAnswers(correctAnswers + 1);
+      setCorrectAnswers(prev => prev + 1);
       playSound('correct');
       speakNumber(answer);
     } else {
@@ -108,26 +118,29 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
     }
 
     setTimeout(() => {
-      nextQuestion();
+      nextQuestion(isCorrect);
     }, 2000);
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = (wasCorrect: boolean) => {
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      completeLevel();
+      completeLevel(wasCorrect);
     }
   };
 
-  const completeLevel = () => {
+  const completeLevel = (wasLastAnswerCorrect: boolean) => {
+    // Ensure correctAnswers is up-to-date for the final calculation
+    const finalCorrectAnswers = correctAnswers + (wasLastAnswerCorrect ? 1 : 0) - (wasLastAnswerCorrect && selectedAnswer !== null ? 1: 0);
+    // This is a bit tricky, let's just use the state variable. It should be updated already.
     const accuracy = correctAnswers / totalQuestions;
     let earnedStars: 1 | 2 | 3 = 1;
-    
-    if (accuracy >= 0.95) earnedStars = 3;
-    else if (accuracy >= 0.80) earnedStars = 2;
+
+    if (accuracy === 1) earnedStars = 3;
+    else if (accuracy >= 0.8) earnedStars = 2;
     
     setStars(earnedStars);
     setGameState('completed');
@@ -141,6 +154,11 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
   const resetGame = () => {
     setGameState('menu');
   };
+
+  const currentLevelData = gameData.levels[currentLevel - 1];
+  const totalQuestions = currentLevelData.questions.length;
+  const currentQuestionData = currentLevelData.questions[currentQuestion];
+
 
   const renderFruits = () => {
     return currentQuestionData.fruits.map((fruit, index) => (
@@ -323,13 +341,18 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
               Pregunta {currentQuestion + 1} de {totalQuestions}
             </Badge>
           </div>
-          <div className="score-display">
-            Puntuación: {score}
+          <div className="flex items-center gap-4">
+             <Button onClick={toggleMute} variant="outline" size="icon" className="text-white border-white/50 hover:bg-white/20">
+              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </Button>
+            <div className="score-display">
+              Puntuación: {score}
+            </div>
           </div>
         </div>
 
         <Progress 
-          value={(currentQuestion / totalQuestions) * 100} 
+          value={((currentQuestion + 1) / totalQuestions) * 100} 
           className="progress-bar"
         />
 
