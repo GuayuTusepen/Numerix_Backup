@@ -11,10 +11,10 @@ import './CountingGame.css';
 import { Volume2, VolumeX } from 'lucide-react';
 
 interface CountingGameProps {
-  onLevelComplete: (stars: 1 | 2 | 3) => void;
+  onGameExit: () => void;
 }
 
-const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
+const CountingGame = ({ onGameExit }: CountingGameProps) => {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -59,17 +59,21 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
   };
 
   const saveProgress = (level: number, starsEarned: number) => {
-    const newProgress = {
-      ...levelProgress,
-      [level]: {
-        stars: starsEarned,
-        completed: true,
-        completedAt: new Date().toISOString()
-      }
-    };
-    setLevelProgress(newProgress);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('countingGameProgress', JSON.stringify(newProgress));
+    const currentProgress = levelProgress[level] || { stars: 0 };
+    // Solo actualiza si las nuevas estrellas son más que las anteriores
+    if (starsEarned > currentProgress.stars) {
+        const newProgress = {
+          ...levelProgress,
+          [level]: {
+            stars: starsEarned,
+            completed: true,
+            completedAt: new Date().toISOString()
+          }
+        };
+        setLevelProgress(newProgress);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('countingGameProgress', JSON.stringify(newProgress));
+        }
     }
   };
 
@@ -118,41 +122,36 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
     }
 
     setTimeout(() => {
-      nextQuestion(isCorrect);
+      nextQuestion();
     }, 2000);
   };
 
-  const nextQuestion = (wasCorrect: boolean) => {
+  const nextQuestion = () => {
     if (currentQuestion < totalQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      completeLevel(wasCorrect);
+      completeLevel();
     }
   };
 
-  const completeLevel = (wasLastAnswerCorrect: boolean) => {
-    // Ensure correctAnswers is up-to-date for the final calculation
-    const finalCorrectAnswers = correctAnswers + (wasLastAnswerCorrect ? 1 : 0) - (wasLastAnswerCorrect && selectedAnswer !== null ? 1: 0);
-    // This is a bit tricky, let's just use the state variable. It should be updated already.
+  const completeLevel = () => {
     const accuracy = correctAnswers / totalQuestions;
     let earnedStars: 1 | 2 | 3 = 1;
-
-    if (accuracy === 1) earnedStars = 3;
-    else if (accuracy >= 0.8) earnedStars = 2;
+    
+    if (accuracy === 1) {
+      earnedStars = 3;
+    } else if (accuracy >= 0.8) {
+      earnedStars = 2;
+    }
     
     setStars(earnedStars);
     setGameState('completed');
     
     saveProgress(currentLevel, earnedStars);
-    onLevelComplete(earnedStars); // Notify parent component
     
     playSound('level_complete');
-  };
-
-  const resetGame = () => {
-    setGameState('menu');
   };
 
   const currentLevelData = gameData.levels[currentLevel - 1];
@@ -206,6 +205,9 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
     return (
       <div className="counting-game">
         <div className="game-container">
+           <Button onClick={onGameExit} variant="link" className="text-white mb-4">
+             ← Salir y Guardar Progreso
+           </Button>
           <Card className="menu-card">
             <CardHeader className="text-center">
               <CardTitle className="game-title">
@@ -317,9 +319,9 @@ const CountingGame = ({ onLevelComplete }: CountingGameProps) => {
                 )}
                 <Button
                   className="action-button secondary"
-                  onClick={resetGame}
+                  onClick={() => setGameState('menu')}
                 >
-                  Menú Principal
+                  Menú de Niveles
                 </Button>
               </div>
             </CardContent>

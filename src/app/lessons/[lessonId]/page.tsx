@@ -12,6 +12,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
+import { gameData } from '@/data/countingGameData'; // Importar los datos del juego
+import { getLocalStorageItem } from '@/lib/localStorage';
 
 // Placeholder for other lesson content components
 function LessonContentPlaceholder({ lesson }: { lesson: Lesson }) {
@@ -36,17 +38,41 @@ export default function LessonPage() {
   
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
   
-  const handleCompleteLesson = (stars: 1 | 2 | 3) => {
-    updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
-    toast({
-      title: "¡Lección Completada!",
-      description: `Ganaste ${stars} estrella(s) por "${lesson?.title}". ¡Buen trabajo!`,
-      action: (
-        <Button size="sm" onClick={() => router.push('/dashboard')}>
-          ¡Siguiente Aventura!
-        </Button>
-      ),
-    });
+  const handleCompleteLesson = () => {
+    // Nueva lógica para la lección de contar
+    if (lessonId === 'count-to-10') {
+      const gameProgress = getLocalStorageItem<any>('countingGameProgress', {});
+      const totalLevels = gameData.levels.length;
+      let perfectLevels = 0;
+
+      for (let i = 1; i <= totalLevels; i++) {
+        if (gameProgress[i]?.stars === 3) {
+          perfectLevels++;
+        }
+      }
+
+      let overallStars: 1 | 2 | 3 = 1;
+      if (perfectLevels === totalLevels) {
+        overallStars = 3; // Todas las lecciones con 3 estrellas
+      } else if (Object.keys(gameProgress).length > 0) {
+        overallStars = 2; // Al menos un nivel completado
+      }
+
+      updateLessonProgress(lessonId, { completed: true, stars: overallStars, lastAttempted: new Date().toISOString() });
+      toast({
+        title: "¡Progreso Guardado!",
+        description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
+      });
+    } else {
+      // Lógica anterior para otras lecciones
+      const stars = (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3);
+      updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
+      toast({
+        title: "¡Lección Completada!",
+        description: `Ganaste ${stars} estrella(s) por "${lesson?.title}". ¡Buen trabajo!`,
+      });
+    }
+     router.push('/dashboard');
   };
 
   if (!lesson) {
@@ -68,7 +94,7 @@ export default function LessonPage() {
   // Define which content to render based on the lesson ID
   const renderLessonContent = () => {
     if (lesson.id === 'count-to-10') {
-      return <CountingGame onLevelComplete={handleCompleteLesson} />;
+      return <CountingGame onGameExit={handleCompleteLesson} />;
     }
     
     // Default interactive content for other lessons
@@ -79,7 +105,7 @@ export default function LessonPage() {
           <Button 
             size="lg" 
             className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
-            onClick={() => handleCompleteLesson( (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3) )}
+            onClick={() => handleCompleteLesson()} // Usa la lógica unificada
             disabled={currentProgress?.completed && currentProgress.stars === 3}
           >
             {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
