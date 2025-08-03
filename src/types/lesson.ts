@@ -72,7 +72,7 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
       },
       { 
         id: 'addition-up-to-20', 
-        title: 'Sumas hasta 20', 
+        title: 'Suma Mágica hasta 20', 
         description: 'Suma con los dedos hasta 20.', 
         iconSrc: '/icons/suma20_fondo.jpg', 
         backgroundSrc: '/icons/fondo_suma20.jpg', 
@@ -89,7 +89,17 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/estacipon_restas_icon.jpg',
     iconHint: 'minus circle',
     lessons: [
-      { id: 'simple-subtraction', title: 'Restas Simples', description: 'Resta números de un solo dígito.', iconSrc: '/icons/simple-subtraction-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'minus one', difficulty: 'easy', activityType: 'placeholder' },
+      { 
+        id: 'simple-subtraction', 
+        title: 'Restas Simples', 
+        description: 'Juega un divertido juego de restas en una página externa.', 
+        iconSrc: '/icons/simple-subtraction-icon.png', 
+        backgroundSrc: 'https://placehold.co/600x400.png', 
+        iconHint: 'minus one', 
+        difficulty: 'easy', 
+        activityType: 'external-link',
+        externalUrl: 'https://es.educaplay.com/recursos-educativos/18889552-juego_de_restas_del_1_al_10.html'
+      },
       { id: 'subtraction-from-20', title: 'Restas desde 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/subtraction-20-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
