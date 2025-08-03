@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { GameObject, GameLevel, GameCategory } from "@/data/classifyAndCountGameData"
-import { Volume2, ChevronRight, VolumeX } from "lucide-react"
+import { Volume2, VolumeX } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 
@@ -92,12 +92,18 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   const dropZonesRef = useRef<Map<string, HTMLDivElement | null>>(new Map());
 
   useEffect(() => {
-    // This effect runs only once on the client side
     if (typeof window !== 'undefined') {
       audioRef.current = new Audio('/sounds/Drag and Dorp funny sound.mp3');
       audioRef.current.loop = true;
       audioRef.current.volume = initialVolume;
     }
+     // Cleanup function to stop music when the component unmounts
+    return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+    };
   }, []);
 
   useEffect(() => {
@@ -569,7 +575,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
                     </Card>
                 </div>
             )}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {currentLevel.categories.map((category, index) => {
               const objectsInCategory = getObjectsInCategory(category.id);
               const isCurrentCountingCategory = gamePhase === 'counting' && countingCategoryIndex === index;
@@ -590,7 +596,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
                     onDrop={gamePhase === 'classifying' ? (e) => handleDrop(e, category.id) : undefined}
                     className="min-h-[150px] sm:min-h-[200px] border-2 border-dashed border-gray-400 rounded-lg p-2 transition-all duration-200"
                   >
-                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                       {objectsInCategory.map((object) => (
                         <div
                           key={object.id}

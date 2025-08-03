@@ -56,6 +56,14 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     } else {
       audio.pause();
     }
+    
+    // Función de limpieza para detener la música cuando el componente se desmonte
+    return () => {
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0; // Reinicia la música para la próxima vez
+        }
+    }
   }, [gameState, isMuted]);
 
   const toggleMute = () => {
