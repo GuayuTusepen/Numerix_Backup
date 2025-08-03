@@ -8,12 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Rocket, Star, Trophy, Award } from 'lucide-react';
 import { LESSON_CATEGORIES } from '@/types/lesson';
+import { cn } from '@/lib/utils';
 
 export function AnimatedGuide() {
   const { activeProfile } = useProfile();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!activeProfile) return null; // No mostrar si no hay perfil activo
+  if (!activeProfile) return null;
 
   const welcomeMessage = activeProfile.gender === 'boy' ? `¡Hola, ${activeProfile.name}! Soy Nubo.` : `¡Hola, ${activeProfile.name}! Soy Nuba.`;
 
@@ -21,11 +22,25 @@ export function AnimatedGuide() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <div className="fixed bottom-4 right-4 z-30 cursor-pointer group">
-          <div className="absolute bottom-full right-0 mb-2 w-48 bg-card p-3 rounded-lg shadow-xl text-sm text-card-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          {/* Default message, visible initially */}
+          <div className={cn(
+            "absolute bottom-full right-0 mb-2 w-48 bg-card p-3 rounded-lg shadow-xl text-sm text-card-foreground transition-opacity duration-300 pointer-events-none",
+            "opacity-100 group-hover:opacity-0"
+          )}>
             <p className="font-semibold">¿Necesitas ayuda?</p>
-            <p>¡Haz clic en mí para un tour!</p>
+            <p>¡Soy tu guía amigable!</p>
             <div className="absolute right-4 -bottom-2 w-0 h-0 border-t-8 border-t-card border-l-8 border-l-transparent border-r-8 border-r-transparent"></div>
           </div>
+          
+          {/* Hover message, visible only on hover */}
+          <div className={cn(
+            "absolute bottom-full right-0 mb-2 w-48 bg-primary p-3 rounded-lg shadow-xl text-sm text-primary-foreground transition-opacity duration-300 pointer-events-none",
+            "opacity-0 group-hover:opacity-100"
+          )}>
+            <p className="font-semibold text-center">¡Haz clic para empezar el tour!</p>
+            <div className="absolute right-4 -bottom-2 w-0 h-0 border-t-8 border-t-primary border-l-8 border-l-transparent border-r-8 border-r-transparent"></div>
+          </div>
+          
           <div className="bg-primary p-2 rounded-full shadow-lg animate-bounce">
             <Image 
               src="/icons/pfp_guia.jpg"
