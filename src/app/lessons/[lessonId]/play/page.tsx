@@ -49,31 +49,38 @@ export default function PlayClassifyAndCountPage() {
         if (!selectedLevel || !storageKey) return;
         
         const levelId = selectedLevel.level.toString();
-        const currentBest = gameProgress[levelId] || { stars: 0 };
+        const currentBest = gameProgress[levelId] || { stars: 0, score: 0, completed: false };
 
-        const newProgress = { ...gameProgress };
-        if(result.stars > currentBest.stars) {
-             newProgress[levelId] = { completed: true, score: result.score, stars: result.stars };
-        } else if (!currentBest.completed) {
-            newProgress[levelId] = { completed: true, score: result.score, stars: result.stars };
+        let progressToSave = currentBest;
+        // Update only if the new score is better, or if it's the first time completing.
+        if (result.score > currentBest.score || !currentBest.completed) {
+            progressToSave = { completed: true, score: result.score, stars: result.stars };
         }
+
+        const newProgress = { 
+            ...gameProgress,
+            [levelId]: progressToSave
+        };
         
         setGameProgress(newProgress);
         setLocalStorageItem(storageKey, newProgress);
 
-        // Update overall lesson progress
+        // Update overall lesson progress for the dashboard
         const totalLevels = classifyAndCountGameData.length;
-        const completedLevels = Object.values(newProgress).filter(p => p.completed).length;
+        const completedLevelsCount = Object.values(newProgress).filter(p => p.completed).length;
         const totalStars = Object.values(newProgress).reduce((acc, p) => acc + p.stars, 0);
-        const maxStars = totalLevels * 3;
         
         let overallStars: 1 | 2 | 3 = 1;
-        if (completedLevels === totalLevels && totalStars === maxStars) {
-            overallStars = 3;
-        } else if (completedLevels > 0) {
-            overallStars = 2;
+        if (completedLevelsCount === totalLevels) {
+            const averageStars = totalStars / totalLevels;
+            if (averageStars >= 2.8) overallStars = 3; // Allow for slight rounding issues, basically perfect
+            else if (averageStars >= 1.8) overallStars = 2;
+            else overallStars = 1;
+        } else if (completedLevelsCount > 0) {
+            overallStars = 1; // Mark as started but not fully complete with a good score
         }
-        updateOverallLessonProgress(lessonId, { completed: completedLevels > 0, stars: overallStars });
+        
+        updateOverallLessonProgress(lessonId, { completed: completedLevelsCount === totalLevels, stars: overallStars, lastAttempted: new Date().toISOString() });
 
         setNotification({
             show: true,
@@ -201,6 +208,3 @@ export default function PlayClassifyAndCountPage() {
         </div>
     );
 }
-
-
-    

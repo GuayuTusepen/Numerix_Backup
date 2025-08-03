@@ -71,6 +71,7 @@ export default function DashboardPage() {
               key={category.id}
               category={category}
               onClick={() => setSelectedCategory(category)}
+              progressData={lessonProgressData}
             />
           ))}
         </div>

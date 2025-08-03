@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -39,7 +40,7 @@ export function LessonItemCard({ lesson, progress }: LessonItemCardProps) {
     <Card className="w-full shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg">
       <CardHeader className="flex flex-row items-start bg-muted/50 p-4 space-x-4">
         <Image
-          src={`https://placehold.co/80x80.png?text=${lesson.title.substring(0,1)}`}
+          src={lesson.iconSrc}
           alt={lesson.title}
           width={60}
           height={60}
