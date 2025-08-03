@@ -46,7 +46,6 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
      return () => {
         if (audioRef.current) {
             audioRef.current.pause();
-            audioRef.current.currentTime = 0;
         }
     };
   }, []);
@@ -56,7 +55,12 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     if (!audio) return;
 
     if (!isMuted) {
-      audio.play().catch(e => console.error("Error al reproducir audio:", e));
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Error al reproducir audio:", error);
+        });
+      }
     } else {
       audio.pause();
     }

@@ -41,30 +41,35 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
           setLevelProgress({});
         }
       }
-      // Aseguramos que audioRef.current sea una instancia de Audio solo en el cliente
       audioRef.current = new Audio('/sounds/Music_Cout_to_10.mp3');
       audioRef.current.loop = true;
+    }
+
+    return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
     }
   }, [storageKey]);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
+  
     if (gameState === 'playing' && !isMuted) {
-      audio.play().catch(e => console.error("Error al reproducir audio:", e));
+      // play() returns a promise, which can be used to avoid interruptions
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          // Autoplay was prevented.
+          console.error("Error al reproducir audio:", error);
+        });
+      }
     } else {
       audio.pause();
     }
-    
-    // Función de limpieza para detener la música cuando el componente se desmonte
-    return () => {
-        if (audio) {
-            audio.pause();
-            audio.currentTime = 0; // Reinicia la música para la próxima vez
-        }
-    }
   }, [gameState, isMuted]);
+
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
@@ -146,7 +151,7 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
       setSelectedAnswer(null);
       setShowResult(false);
     } else {
-      completeLevel(isCorrect ? correctAnswers + 1 : correctAnswers);
+      completeLevel(isCorrect ? correctAnswers : correctAnswers);
     }
   };
   
