@@ -65,9 +65,9 @@ export function LessonCategoryCard({ category, onClick, progressData }: LessonCa
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
       
       <div className="relative z-20 flex flex-col justify-end h-full p-6 text-white">
-        <CardTitle className="text-3xl font-bold drop-shadow-lg">{category.title}</CardTitle>
-        <CardDescription className="text-white/90 drop-shadow-md">{category.description}</CardDescription>
-        <div className="flex items-center justify-end mt-4 text-sm font-medium text-white/90 drop-shadow-sm">
+        <CardTitle className="text-3xl font-bold drop-shadow-lg font-zto">{category.title}</CardTitle>
+        <CardDescription className="text-white/90 drop-shadow-md font-zto">{category.description}</CardDescription>
+        <div className="flex items-center justify-end mt-4 text-sm font-medium text-white/90 drop-shadow-sm font-zto">
           {statusIcon}
           <span className="ml-2">{statusText}</span>
           <ChevronRight className="h-4 w-4 ml-1" />
