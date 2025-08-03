@@ -65,6 +65,10 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   
   const [countingCategoryIndex, setCountingCategoryIndex] = useState(0);
   const [countAnswers, setCountAnswers] = useState<CountAnswer>({});
+  
+  // State to prevent repeat audio triggers
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const initialVolume = 0.5; // Volumen normal de la música
@@ -112,18 +116,16 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
       console.log("Level completed:", result)
     })
   
-  const speak = (text: string) => {
+  const speak = useCallback((text: string) => {
     if (soundEnabled && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'es-ES';
       utterance.rate = 0.9;
       
-      // Bajar el volumen de la música antes de hablar
       if (audioRef.current) {
         audioRef.current.volume = duckedVolume;
       }
 
-      // Cuando la voz termine, restaurar el volumen
       utterance.onend = () => {
         if (audioRef.current) {
           audioRef.current.volume = initialVolume;
@@ -132,7 +134,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
       
       window.speechSynthesis.speak(utterance);
     }
-  }
+  }, [soundEnabled]);
 
   const playSound = useCallback(
     (type: "success" | "error" | "complete" | "drop" | "info", text?: string) => {
@@ -195,11 +197,9 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     // --- Touch Drag and Drop Logic ---
   const handleTouchStart = (e: React.TouchEvent, object: GameObject) => {
     setDraggedObject(object);
-    const touch = e.touches[0];
     const target = e.currentTarget as HTMLDivElement;
     draggedItemRef.current = target;
 
-    // Style the dragged item
     target.style.opacity = '0.5';
     target.style.transform = 'scale(1.1)';
     target.style.zIndex = '1000';
@@ -212,12 +212,10 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     const touch = e.touches[0];
     const item = draggedItemRef.current;
     
-    // Move the item visually with the finger
     item.style.position = 'fixed';
     item.style.left = `${touch.clientX - item.offsetWidth / 2}px`;
     item.style.top = `${touch.clientY - item.offsetHeight / 2}px`;
 
-    // Highlight drop zones on hover
     dropZonesRef.current.forEach((zone) => {
         if (zone) {
             const rect = zone.getBoundingClientRect();
@@ -236,7 +234,6 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     const touch = e.changedTouches[0];
     let droppedOnCategoryId: string | null = null;
     
-    // Find which drop zone the touch ended on
     dropZonesRef.current.forEach((zone, categoryId) => {
         if(zone) {
             const rect = zone.getBoundingClientRect();
@@ -251,7 +248,6 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
         processDrop(draggedObject.id, droppedOnCategoryId);
     }
 
-    // Reset styles
     const item = draggedItemRef.current;
     item.style.opacity = '1';
     item.style.transform = 'scale(1)';
@@ -285,20 +281,22 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
 
 
   useEffect(() => {
-    if(gamePhase === 'classifying') {
+    if(gamePhase === 'classifying' && !isTransitioning) {
         const allObjectsPlaced = objects.every((obj) => obj.droppedInCategory);
         if (allObjectsPlaced && objects.length > 0) {
             const allCorrect = objects.every((obj) => obj.isCorrect);
             if(allCorrect) {
+                setIsTransitioning(true); // Lock to prevent re-trigger
                 playSound("info", "¡Todos clasificados! Ahora, a contar.");
                 setTimeout(() => {
                     setGamePhase('counting');
                     setShowFeedback(null);
+                    setIsTransitioning(false); // Unlock after transition
                 }, 2000);
             }
         }
     }
-  }, [objects, gamePhase, playSound]);
+  }, [objects, gamePhase, playSound, isTransitioning]);
 
   const resetObject = (objectId: string) => {
     setObjects((prev) =>
@@ -307,7 +305,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   }
   
   const handleCountAnswer = (categoryId: string, answer: number) => {
-    if (countAnswers[categoryId]?.isCorrect) return; // Prevent re-answering correct questions
+    if (countAnswers[categoryId]?.isCorrect) return;
 
     const correctCount = objects.filter(obj => obj.type === categoryId).length;
     const isCorrect = answer === correctCount;
@@ -320,7 +318,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     if(isCorrect) {
         const category = currentLevel.categories.find(c => c.id === categoryId);
         playSound("success", `¡Correcto! Hay ${answer} ${category?.name.toLowerCase()}.`);
-        setScore(prev => prev + 20); // Extra points for counting
+        setScore(prev => prev + 20);
         
         setTimeout(() => {
             if (countingCategoryIndex < currentLevel.categories.length - 1) {
@@ -335,12 +333,15 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   }
 
   const checkCompletion = useCallback(() => {
+    if (isTransitioning) return; // Prevent completion check during other transitions
+    
     const allCountsCorrect = currentLevel.categories.every(cat => {
         const correctCount = objects.filter(obj => obj.type === cat.id).length;
         return countAnswers[cat.id]?.answer === correctCount;
     });
 
     if (allCountsCorrect) {
+        setIsTransitioning(true); // Lock to prevent re-trigger
         playSound("complete");
         const totalPossibleAttempts = currentLevel.objects.length + currentLevel.categories.length;
         const efficiency = totalPossibleAttempts > 0 ? totalPossibleAttempts / Math.max(attempts, totalPossibleAttempts) : 0;
@@ -351,9 +352,10 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
         setTimeout(() => {
             setGameState("completed");
             handleLevelComplete({ score, stars });
+            setIsTransitioning(false); // Unlock
         }, 1500);
     }
-  }, [attempts, countAnswers, currentLevel, handleLevelComplete, objects, playSound, score]);
+  }, [attempts, countAnswers, currentLevel, handleLevelComplete, objects, playSound, score, isTransitioning]);
 
 
   useEffect(() => {
@@ -376,10 +378,11 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     const shuffledObjects = shuffleArray(setup.objects);
     setObjects(shuffledObjects.map((obj) => ({ ...obj })));
     setScore(0);
-    setAttempts(setup.objects.length); // Start attempts with the number of objects to classify
+    setAttempts(setup.objects.length);
     setGamePhase('classifying');
     setCountAnswers({});
     setCountingCategoryIndex(0);
+    setIsTransitioning(false);
   }, [levelTemplate]);
   
   useEffect(() => {
@@ -639,5 +642,3 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
 }
 
 export default ClassifyAndCountGame;
-
-    
