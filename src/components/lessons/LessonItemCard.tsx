@@ -48,7 +48,7 @@ export function LessonItemCard({ lesson, progress }: LessonItemCardProps) {
             className="absolute inset-0 z-0 transition-transform duration-300 group-hover:scale-110"
             data-ai-hint={lesson.iconHint} // Reuse hint for background
         />
-        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
         
         <div className="relative z-20 flex flex-col justify-between h-full text-white min-h-[220px]">
           <CardHeader className="flex flex-row items-center space-x-4 p-4">
@@ -61,14 +61,14 @@ export function LessonItemCard({ lesson, progress }: LessonItemCardProps) {
                 data-ai-hint={lesson.iconHint}
               />
               <div className="flex-1">
-                <CardTitle className="text-lg font-bold drop-shadow-md">{lesson.title}</CardTitle>
+                <CardTitle className="text-lg font-bold [text-shadow:1px_1px_3px_rgba(0,0,0,0.7)]">{lesson.title}</CardTitle>
                 <DifficultyBadge difficulty={lesson.difficulty} />
               </div>
               {progress?.completed && <CheckCircle2 className="h-6 w-6 text-green-300" />}
           </CardHeader>
 
           <CardContent className="p-4 pt-0">
-             <CardDescription className="text-sm text-white/90 mb-3 min-h-[40px] drop-shadow-sm">{lesson.description}</CardDescription>
+             <CardDescription className="text-sm text-white/95 mb-3 min-h-[40px] [text-shadow:1px_1px_2px_rgba(0,0,0,0.8)]">{lesson.description}</CardDescription>
             <div className="flex items-center justify-between">
               <div className="flex bg-black/30 p-1 rounded-full">
                 {[1, 2, 3].map((s) => (
