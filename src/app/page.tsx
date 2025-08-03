@@ -14,10 +14,10 @@ export default function HomePage() {
   useEffect(() => {
     // Este efecto se ejecuta una vez cuando el componente se monta (en la carga inicial o al refrescar esta página).
     const timer = setTimeout(() => {
-      setIsAppLoading(false); // Después de 5 segundos, permite que la lógica de navegación proceda.
-    }, 5000); // 5000 milisegundos = 5 segundos
+      setIsAppLoading(false); // Después de 3 segundos, permite que la lógica de navegación proceda.
+    }, 3000); // 3000 milisegundos = 3 segundos
 
-    // Limpia el temporizador si el componente se desmonta antes de que se cumplan los 5 segundos.
+    // Limpia el temporizador si el componente se desmonta antes de que se cumplan los 3 segundos.
     return () => clearTimeout(timer);
   }, []); // El array de dependencias vacío [] asegura que esto solo se ejecute al montar/desmontar.
 
@@ -28,7 +28,7 @@ export default function HomePage() {
       return;
     }
 
-    // Una vez que isAppLoading es false (han pasado los 5 segundos) y los perfiles han cargado,
+    // Una vez que isAppLoading es false (han pasado los 3 segundos) y los perfiles han cargado,
     // decide a dónde redirigir.
     if (activeProfile) {
       router.replace('/dashboard');
@@ -43,4 +43,3 @@ export default function HomePage() {
   // Muestra la SplashScreen mientras isAppLoading es true.
   return <SplashScreen />;
 }
-

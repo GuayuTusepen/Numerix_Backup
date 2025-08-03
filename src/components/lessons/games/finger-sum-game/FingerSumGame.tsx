@@ -176,7 +176,7 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
         </div>
         
         <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg animate-bounce">🧙‍♂️ FingerSum ✨</h1>
+          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg animate-slow-bounce">🧙‍♂️ FingerSum ✨</h1>
           <p className="text-xl text-white/90 font-medium">¡Aprende a sumar hasta 20 con deditos mágicos!</p>
         </div>
 

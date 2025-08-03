@@ -98,8 +98,8 @@ export default function Tutorial({ onComplete }: TutorialProps) {
 
           {!currentStep.showFingers && (
             <div className="text-center mb-8">
-              <div className="text-8xl mb-4 animate-bounce">🧙‍♂️</div>
-              <div className="text-4xl animate-pulse">✨</div>
+              <div className="text-8xl mb-4 animate-slow-bounce">🧙‍♂️</div>
+              <div className="text-4xl animate-slow-pulse">✨</div>
             </div>
           )}
 

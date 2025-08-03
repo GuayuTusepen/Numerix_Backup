@@ -55,7 +55,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
         
         let answer = left + right;
 
-        if (answer > config.maxNumber) {
+        if (answer > config.maxNumber || answer < 1) { // Ensure answer is valid
           i-- 
           continue
         }
@@ -130,7 +130,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4">
       {showCelebration && (
         <div className="fixed inset-0 bg-yellow-400/20 flex items-center justify-center z-50 pointer-events-none">
-          <div className="text-center animate-bounce">
+          <div className="text-center animate-slow-bounce">
             <div className="text-9xl mb-4">🎉</div>
             <div className="text-4xl font-bold text-white drop-shadow-lg">¡Excelente!</div>
           </div>
@@ -229,7 +229,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
         </Card>
 
         <div className="text-center mt-6">
-          <div className="text-4xl animate-bounce">🧙‍♂️</div>
+          <div className="text-4xl animate-slow-bounce">🧙‍♂️</div>
           <div className="text-white font-medium mt-2">
             {showFeedback ? (isCorrect ? "¡Eres increíble! ✨" : "¡Sigue intentando! 💪") : "¡Tú puedes hacerlo! 🌟"}
           </div>

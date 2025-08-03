@@ -68,8 +68,8 @@ export default function Results({
 
         <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl text-center">
           <div className="mb-6">
-            <div className="text-8xl mb-4 animate-bounce">{result.emoji}</div>
-            <div className="text-6xl animate-pulse">✨</div>
+            <div className="text-8xl mb-4 animate-slow-bounce">{result.emoji}</div>
+            <div className="text-6xl animate-slow-pulse">✨</div>
           </div>
 
           <div className="mb-6">
@@ -104,7 +104,7 @@ export default function Results({
               <div
                 key={star}
                 className={`text-4xl transition-all duration-500 ${
-                  star <= Math.ceil((percentage / 100) * 3) ? "text-yellow-400 animate-pulse" : "text-gray-300"
+                  star <= Math.ceil((percentage / 100) * 3) ? "text-yellow-400 animate-slow-pulse" : "text-gray-300"
                 }`}
                 style={{ animationDelay: `${star * 0.2}s` }}
               >
@@ -142,6 +142,15 @@ export default function Results({
             </Button>
           </div>
         </Card>
+
+        <div className="text-center mt-8">
+          <div className="text-6xl animate-slow-bounce">🧙‍♂️</div>
+          <div className="text-white font-bold text-xl mt-2">
+            {isExcellent && "¡Eres increíble! 🎉"}
+            {isGood && !isExcellent && "¡Buen trabajo! 👏"}
+            {needsImprovement && "¡Sigue practicando! 💪"}
+          </div>
+        </div>
       </div>
     </div>
   )
