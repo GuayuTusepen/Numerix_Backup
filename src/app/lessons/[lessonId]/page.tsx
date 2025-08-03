@@ -1,19 +1,19 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { LESSON_CATEGORIES } from '@/types/lesson';
 import type { Lesson } from '@/types/lesson';
 import { Button } from '@/components/ui/button';
 import { useProgress } from '@/contexts/ProgressContext';
-import { ArrowLeft, CheckCircle, Star, Zap, ExternalLink, Timer } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Star, Zap, ExternalLink, Timer, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
 import { gameData } from '@/data/countingGameData';
-import { getLocalStorageItem } from '@/lib/localStorage';
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
 
 // Placeholder for other lesson content components
@@ -45,28 +45,56 @@ function LessonContentPlaceholder({ lesson, onComplete }: { lesson: Lesson, onCo
 }
 
 function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComplete: (stars: 1 | 2 | 3) => void }) {
-  const [timer, setTimer] = useState(180); // 3 minutes in seconds
-  const [activityStarted, setActivityStarted] = useState(false);
+  const { activeProfile } = useProfile();
+  const storageKey = activeProfile ? `timer_${activeProfile.id}_${lesson.id}` : null;
+
+  const [endTime, setEndTime] = useState<number | null>(() => {
+    if (!storageKey) return null;
+    return getLocalStorageItem<number | null>(storageKey, null);
+  });
+  const [timeLeft, setTimeLeft] = useState(180);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activityStarted && timer > 0) {
-      interval = setInterval(() => {
-        setTimer(t => t - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      onComplete(2); // Complete with 2 stars by default
-    }
+    if (endTime === null) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const remaining = Math.round((endTime - now) / 1000);
+      if (remaining <= 0) {
+        setTimeLeft(0);
+        clearInterval(interval);
+        // Automatically complete with 2 stars if timer runs out
+        if (getLocalStorageItem<number | null>(storageKey, null) !== null) {
+          onComplete(2);
+          setLocalStorageItem(storageKey, null); // Clear timer
+        }
+      } else {
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
     return () => clearInterval(interval);
-  }, [activityStarted, timer, onComplete]);
+  }, [endTime, onComplete, storageKey]);
   
-  const minutes = Math.floor(timer / 60);
-  const seconds = timer % 60;
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
 
   const handleStartActivity = () => {
     window.open(lesson.externalUrl, '_blank', 'noopener,noreferrer');
-    setActivityStarted(true);
-  }
+    const newEndTime = Date.now() + 180 * 1000; // 3 minutes from now
+    if (storageKey) {
+      setLocalStorageItem(storageKey, newEndTime);
+      setEndTime(newEndTime);
+    }
+  };
+
+  const handleManualComplete = () => {
+    if (storageKey) {
+      setLocalStorageItem(storageKey, null); // Clear timer
+    }
+    setEndTime(null);
+    onComplete(3); // Manually completed, award 3 stars
+  };
 
   return (
     <CardContent className="p-6 md:p-8">
@@ -76,17 +104,22 @@ function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComple
         <p className="text-muted-foreground max-w-md">
           Esta lección te llevará a un juego divertido en otra página web. ¡Juega allí y regresa cuando hayas terminado!
         </p>
-        {!activityStarted ? (
+        {endTime === null ? (
           <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleStartActivity}>
              ¡Ir a la Actividad!
           </Button>
         ) : (
-          <div className="text-center p-4 border rounded-lg bg-background">
-              <p className="font-semibold text-lg text-primary flex items-center justify-center">
-                <Timer className="mr-2 animate-spin" />
-                Tiempo restante: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-              </p>
-             <p className="text-sm text-muted-foreground mt-2">¡La lección se completará cuando el tiempo termine!</p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="text-center p-4 border rounded-lg bg-background">
+                <p className="font-semibold text-lg text-primary flex items-center justify-center">
+                  <Timer className="mr-2 animate-spin" />
+                  Tiempo restante: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                </p>
+               <p className="text-sm text-muted-foreground mt-2">¡La lección se completará cuando el tiempo termine!</p>
+            </div>
+            <Button onClick={handleManualComplete}>
+              <Check className="mr-2 h-4 w-4" /> ¡Lo Completé!
+            </Button>
           </div>
         )}
       </div>
@@ -158,11 +191,21 @@ export default function LessonPage() {
 
   const handleLessonComplete = (stars: 0 | 1 | 2 | 3) => {
       if(!lesson) return;
-      updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
+      updateLessonProgress(lesson.id, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
       toast({
         title: "¡Lección Completada!",
         description: `Ganaste ${stars} estrella(s) por "${lesson.title}". ¡Buen trabajo!`,
       });
+
+      // Special logic: if 'addition-up-to-20' is completed with 3 stars, also complete 'simple-addition'
+      if (lesson.id === 'addition-up-to-20' && stars === 3) {
+        updateLessonProgress('simple-addition', { completed: true, stars: 3, lastAttempted: new Date().toISOString() });
+        toast({
+          title: "¡Bono!",
+          description: `¡Eres tan bueno/a en sumas que también completaste "Sumas Simples"!`,
+        });
+      }
+
       router.push('/dashboard');
   }
 
