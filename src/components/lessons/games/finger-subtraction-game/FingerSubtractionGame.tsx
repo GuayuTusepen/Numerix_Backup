@@ -44,7 +44,7 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !audioRef.current) {
       audioRef.current = new Audio('/sounds/sound_operations.mp3');
       audioRef.current.loop = true;
       audioRef.current.volume = 0.5;
@@ -56,25 +56,16 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
         }
     };
   }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const shouldPlay = (gameState === 'playing' || gameState === 'tutorial') && soundEnabled;
-
-    const playPromise = shouldPlay ? audio.play() : Promise.resolve();
-    
-    playPromise.catch(e => console.error("Error al reproducir música:", e));
-
-    return () => {
-      playPromise.then(() => {
-        if (audio.paused === false) {
-          audio.pause();
-        }
-      }).catch(()=>{});
-    };
-  }, [gameState, soundEnabled]);
+  
+  const toggleSound = () => {
+    const willBeEnabled = !soundEnabled;
+    setSoundEnabled(willBeEnabled);
+    if (willBeEnabled) {
+      audioRef.current?.play().catch(e => console.error("Error playing audio on toggle:", e));
+    } else {
+      audioRef.current?.pause();
+    }
+  };
 
 
   useEffect(() => {
@@ -107,6 +98,10 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
     if (!unlockedLevels.includes(selectedDifficulty)) {
       return
     }
+    
+    if (soundEnabled && audioRef.current?.paused) {
+      audioRef.current?.play().catch(e => console.error("Error starting music:", e));
+    }
 
     setDifficulty(selectedDifficulty)
     setScore(0)
@@ -118,9 +113,20 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
         setGameState("playing")
     }
   }
+  
+  const handleExit = () => {
+    audioRef.current?.pause();
+    onGameExit();
+  }
+  
+  const returnToMenu = () => {
+    audioRef.current?.pause();
+    setGameState("menu");
+  }
 
   const finishGame = (finalScore: number) => {
     setScore(finalScore)
+    audioRef.current?.pause();
 
     const percentage = (finalScore / totalQuestions) * 100
     if (percentage >= 70) {
@@ -155,7 +161,7 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
   }
 
   if (gameState === "tutorial") {
-    return <Tutorial onComplete={handleTutorialComplete} onExit={() => setGameState("menu")} />
+    return <Tutorial onComplete={handleTutorialComplete} onExit={returnToMenu} />
   }
 
   if (gameState === "playing") {
@@ -164,9 +170,9 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
         difficulty={difficulty}
         config={difficultyConfig[difficulty]}
         onComplete={finishGame}
-        onExit={() => setGameState("menu")}
+        onExit={returnToMenu}
         soundEnabled={soundEnabled}
-        toggleSound={() => setSoundEnabled(!soundEnabled)}
+        toggleSound={toggleSound}
       />
     )
   }
@@ -177,7 +183,7 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
         score={score}
         total={totalQuestions}
         onPlayAgain={() => startGame(difficulty)}
-        onMenuReturn={() => setGameState("menu")}
+        onMenuReturn={returnToMenu}
         onNextLevel={() => {
           const levels: Difficulty[] = ["easy", "intermediate", "advanced"]
           const currentIndex = levels.indexOf(difficulty)
@@ -210,11 +216,11 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
     <div className="min-h-screen bg-gradient-to-br from-red-400 via-orange-400 to-yellow-400 p-4">
       <div className="max-w-4xl mx-auto">
          <div className="flex justify-between items-center mb-4">
-            <Button onClick={onGameExit} variant="ghost" className="text-white hover:bg-white/20">
+            <Button onClick={handleExit} variant="ghost" className="text-white hover:bg-white/20">
                 ← Salir
             </Button>
             <Button
-                onClick={() => setSoundEnabled(!soundEnabled)}
+                onClick={toggleSound}
                 variant="outline"
                 size="icon"
                 className="bg-white/20 border-white/30 text-white hover:bg-white/30"
