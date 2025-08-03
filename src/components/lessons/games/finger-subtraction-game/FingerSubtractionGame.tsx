@@ -165,6 +165,8 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
         config={difficultyConfig[difficulty]}
         onComplete={finishGame}
         onExit={() => setGameState("menu")}
+        soundEnabled={soundEnabled}
+        toggleSound={() => setSoundEnabled(!soundEnabled)}
       />
     )
   }

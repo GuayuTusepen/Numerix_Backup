@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Home } from "lucide-react"
+import { Home, Volume2, VolumeX } from "lucide-react"
 import FingerDisplay from "./FingerDisplay"
 
 interface GameLevelProps {
@@ -17,6 +17,8 @@ interface GameLevelProps {
   }
   onComplete: (score: number) => void
   onExit: () => void
+  soundEnabled: boolean;
+  toggleSound: () => void;
 }
 
 interface Question {
@@ -26,7 +28,7 @@ interface Question {
   options: number[]
 }
 
-export default function GameLevel({ difficulty, config, onComplete, onExit }: GameLevelProps) {
+export default function GameLevel({ difficulty, config, onComplete, onExit, soundEnabled, toggleSound }: GameLevelProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [questions, setQuestions] = useState<Question[]>([])
@@ -139,6 +141,14 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
                 Aciertos: {score}/{currentQuestion + (showFeedback ? 1 : 0)}
               </div>
             </div>
+             <Button
+                onClick={toggleSound}
+                variant="outline"
+                size="icon"
+                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              >
+                {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </Button>
           </div>
 
           <div className={`px-4 py-2 rounded-full text-white font-semibold ${config.color}`}>{config.name}</div>
