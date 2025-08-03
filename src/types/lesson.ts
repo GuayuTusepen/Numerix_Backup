@@ -110,8 +110,17 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/eart_forms_icon.jpg',
     iconHint: 'earth shapes',
     lessons: [
-      { id: 'basic-shapes', title: 'Formas Básicas', description: 'Aprende círculos, cuadrados y triángulos.', iconSrc: '/icons/basic-shapes-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'square circle', difficulty: 'easy', activityType: 'placeholder' },
-      { id: 'more-shapes', title: 'Más Formas', description: 'Explora rectángulos, estrellas y corazones.', iconSrc: '/icons/more-shapes-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'star heart', difficulty: 'medium', activityType: 'placeholder' },
+      { 
+        id: 'basic-shapes', 
+        title: 'Formas Básicas', 
+        description: 'Aprende círculos, cuadrados y triángulos en este juego externo.', 
+        iconSrc: '/icons/basic-shapes-icon.png', 
+        backgroundSrc: 'https://placehold.co/600x400.png', 
+        iconHint: 'square circle', 
+        difficulty: 'easy', 
+        activityType: 'external-link',
+        externalUrl: 'https://arbolabc.com/juegos-de-figuras-geometricas/aprendamos-las-formas'
+      },
     ],
   },
 ];
