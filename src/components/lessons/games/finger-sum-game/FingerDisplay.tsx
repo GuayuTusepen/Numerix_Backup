@@ -39,7 +39,6 @@ export default function FingerDisplay({
   }
 
   const renderResultImage = (totalFingers: number) => {
-    // Para el resultado, si es mayor que 10, mostramos un placeholder genérico por ahora
     const imageUrl = totalFingers <= 10 ? fingerImages[totalFingers] : 'https://placehold.co/160x160.png';
     const altText = totalFingers <= 10 ? `Imagen de ${totalFingers} dedos` : `${totalFingers} dedos`;
 

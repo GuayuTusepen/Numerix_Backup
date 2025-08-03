@@ -88,17 +88,28 @@ export default {
   				}
   			},
         'slow-bounce': {
-          '0%, 100%': { transform: 'translateY(-6%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+          '0%, 100%': { transform: 'translateY(-2%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
           '50%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
         },
+        'bounce': { // Kept original bounce for faster elements if needed
+          '0%, 100%': {
+            transform: 'translateY(-25%)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+          },
+          '50%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+          },
+        },
         'slow-pulse': {
-          '50%': { opacity: '.8' },
+          '50%': { opacity: '.85' },
         }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'slow-bounce': 'slow-bounce 4s infinite',
+        'bounce': 'bounce 1s infinite',
         'slow-pulse': 'slow-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   		}
   	}

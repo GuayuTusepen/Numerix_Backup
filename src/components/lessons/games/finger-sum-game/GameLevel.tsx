@@ -1,10 +1,10 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Home } from "lucide-react"
+import { Home, Volume2, VolumeX } from "lucide-react"
 import FingerDisplay from "./FingerDisplay"
 
 interface GameLevelProps {
@@ -34,6 +34,38 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [isMuted, setIsMuted] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      audioRef.current = new Audio('/sounds/contar_sound.mp3');
+      audioRef.current.loop = true;
+    }
+     return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+    };
+  }, []);
+  
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (!isMuted) {
+      audio.play().catch(e => console.error("Error al reproducir audio:", e));
+    } else {
+      audio.pause();
+    }
+  }, [isMuted]);
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
 
   // Generate questions
   useEffect(() => {
@@ -130,7 +162,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4">
       {showCelebration && (
         <div className="fixed inset-0 bg-yellow-400/20 flex items-center justify-center z-50 pointer-events-none">
-          <div className="text-center animate-slow-bounce">
+          <div className="text-center animate-bounce">
             <div className="text-9xl mb-4">🎉</div>
             <div className="text-4xl font-bold text-white drop-shadow-lg">¡Excelente!</div>
           </div>
@@ -147,15 +179,21 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
             <Home className="mr-2 h-4 w-4" />
             Menú
           </Button>
-
-          <div className="text-center">
-            <div className="text-white font-bold text-lg">
-              Pregunta {currentQuestion + 1} de {config.questions}
+          
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <div className="text-white font-bold text-lg">
+                Pregunta {currentQuestion + 1} de {config.questions}
+              </div>
+              <div className="text-white/80">
+                Puntuación: {score}/{currentQuestion + (showFeedback ? 1 : 0)}
+              </div>
             </div>
-            <div className="text-white/80">
-              Puntuación: {score}/{currentQuestion + (showFeedback ? 1 : 0)}
-            </div>
+             <Button onClick={toggleMute} variant="outline" size="icon" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </Button>
           </div>
+
 
           <div className={`px-4 py-2 rounded-full text-white font-semibold ${config.color}`}>{config.name}</div>
         </div>
@@ -229,7 +267,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
         </Card>
 
         <div className="text-center mt-6">
-          <div className="text-4xl animate-slow-bounce">🧙‍♂️</div>
+          <div className="text-4xl animate-bounce">🧙‍♂️</div>
           <div className="text-white font-medium mt-2">
             {showFeedback ? (isCorrect ? "¡Eres increíble! ✨" : "¡Sigue intentando! 💪") : "¡Tú puedes hacerlo! 🌟"}
           </div>

@@ -30,8 +30,11 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
   const { activeProfile } = useProfile();
   const { updateLessonProgress } = useProgress();
   
-  const storageKey = activeProfile ? `fingersum_progress_${activeProfile.id}` : null;
+  const tutorialStorageKey = activeProfile ? `fingersum_tutorial_completed_${activeProfile.id}` : null;
+  const progressStorageKey = activeProfile ? `fingersum_progress_${activeProfile.id}` : null;
+
   const [unlockedLevels, setUnlockedLevels] = useState<Difficulty[]>(["easy"]);
+  const [tutorialCompleted, setTutorialCompleted] = useState(false);
 
   const difficultyConfig = {
     easy: { name: "Fácil", questions: 5, maxNumber: 10, color: "bg-green-500" },
@@ -40,17 +43,29 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
   }
 
   useEffect(() => {
-    if (storageKey) {
-      const savedProgress = getLocalStorageItem<{ unlockedLevels: Difficulty[] }>(storageKey, { unlockedLevels: ["easy"] });
+    if (progressStorageKey) {
+      const savedProgress = getLocalStorageItem<{ unlockedLevels: Difficulty[] }>(progressStorageKey, { unlockedLevels: ["easy"] });
       setUnlockedLevels(savedProgress.unlockedLevels);
     }
-  }, [storageKey]);
+    if(tutorialStorageKey) {
+        const savedTutorialStatus = getLocalStorageItem<boolean>(tutorialStorageKey, false);
+        setTutorialCompleted(savedTutorialStatus);
+    }
+  }, [progressStorageKey, tutorialStorageKey]);
 
   const saveProgress = (newUnlockedLevels: Difficulty[]) => {
-    if (storageKey) {
+    if (progressStorageKey) {
       setUnlockedLevels(newUnlockedLevels)
-      setLocalStorageItem(storageKey, { unlockedLevels: newUnlockedLevels });
+      setLocalStorageItem(progressStorageKey, { unlockedLevels: newUnlockedLevels });
     }
+  }
+
+  const handleTutorialComplete = () => {
+      if(tutorialStorageKey) {
+        setLocalStorageItem(tutorialStorageKey, true);
+        setTutorialCompleted(true);
+      }
+      setGameState("playing");
   }
 
   const startGame = (selectedDifficulty: Difficulty) => {
@@ -61,7 +76,12 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
     setDifficulty(selectedDifficulty)
     setScore(0)
     setTotalQuestions(difficultyConfig[selectedDifficulty].questions)
-    setGameState("playing")
+    
+    if (selectedDifficulty === 'easy' && !tutorialCompleted) {
+        setGameState("tutorial");
+    } else {
+        setGameState("playing")
+    }
   }
 
   const finishGame = (finalScore: number) => {
@@ -81,7 +101,6 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
       }
     }
     
-    // Update overall lesson progress
     const allLevels = ["easy", "intermediate", "advanced"];
     const completedCount = allLevels.filter(l => unlockedLevels.includes(l as Difficulty)).length;
     let stars: 1 | 2 | 3 = 1;
@@ -93,11 +112,9 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
     
     updateLessonProgress(lessonId, { completed: completedCount > 0, stars });
     
-    // Specific logic for simple addition
     if(lessonId === 'addition-up-to-20' && stars === 3) {
       updateLessonProgress('simple-addition', { completed: true, stars: 3, lastAttempted: new Date().toISOString() });
     }
-
 
     setGameState("results")
   }
@@ -111,7 +128,7 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
   }
 
   if (gameState === "tutorial") {
-    return <Tutorial onComplete={() => setGameState("menu")} />
+    return <Tutorial onComplete={handleTutorialComplete} />
   }
 
   if (gameState === "playing") {
@@ -176,27 +193,11 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
         </div>
         
         <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg animate-slow-bounce">🧙‍♂️ FingerSum ✨</h1>
+          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg animate-bounce">🧙‍♂️ FingerSum ✨</h1>
           <p className="text-xl text-white/90 font-medium">¡Aprende a sumar hasta 20 con deditos mágicos!</p>
         </div>
 
-
         <div className="grid gap-6 max-w-2xl mx-auto">
-          <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-            <div className="text-center">
-              <div className="text-4xl mb-4">🎓</div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Tutorial</h2>
-              <p className="text-gray-600 mb-4">Aprende cómo jugar con el Mago Suma</p>
-              <Button
-                onClick={() => setGameState("tutorial")}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 text-lg font-semibold rounded-full"
-              >
-                <Play className="mr-2 h-5 w-5" />
-                Comenzar Tutorial
-              </Button>
-            </div>
-          </Card>
-
           <div className="grid gap-4">
             <h2 className="text-3xl font-bold text-white text-center mb-4">Elige tu nivel</h2>
 
