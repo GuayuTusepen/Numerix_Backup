@@ -19,6 +19,7 @@ export interface GameLevel {
   categories: GameCategory[];
 }
 
+// Esta es una plantilla. El juego generará un subconjunto aleatorio de estos objetos cada vez.
 export const classifyAndCountGameData: GameLevel[] = [
   // NIVEL 1: Animales y Juguetes (4 animales, 4 juguetes)
   {
@@ -28,14 +29,16 @@ export const classifyAndCountGameData: GameLevel[] = [
       { id: "cat", type: "animal", name: "Gato", asset: "🐱" },
       { id: "rabbit", type: "animal", name: "Conejo", asset: "🐰" },
       { id: "bird", type: "animal", name: "Pájaro", asset: "🐦" },
+      { id: "lion-1", type: "animal", name: "León", asset: "🦁" },
       { id: "ball", type: "juguete", name: "Pelota", asset: "⚽" },
       { id: "car", type: "juguete", name: "Carro", asset: "🚗" },
       { id: "doll", type: "juguete", name: "Muñeca", asset: "🪆" },
       { id: "blocks", type: "juguete", name: "Bloques", asset: "🧱" },
+      { id: "teddy-1", type: "juguete", name: "Osito", asset: "🧸" },
     ],
     categories: [
-      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [3, 4, 5] },
-      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [2, 3, 4] },
+      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [2, 3, 4, 5] },
+      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [2, 3, 4, 5] },
     ],
   },
 

@@ -5,7 +5,9 @@ import type React from "react"
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import type { GameObject, GameLevel } from "@/data/classifyAndCountGameData"
+import type { GameObject, GameLevel, GameCategory } from "@/data/classifyAndCountGameData"
+import { Volume2, ChevronRight } from "lucide-react"
+
 
 interface Props {
   gameLevel: GameLevel
@@ -27,16 +29,40 @@ interface CountAnswer {
   }
 }
 
-const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) => {
+// Función para generar una configuración de nivel aleatoria
+const generateRandomLevelSetup = (levelTemplate: GameLevel): { objects: GameObject[], categories: GameCategory[] } => {
+    const newObjects: GameObject[] = [];
+    const newCategories: GameCategory[] = [...levelTemplate.categories];
+
+    levelTemplate.categories.forEach(category => {
+        const categoryObjects = levelTemplate.objects.filter(obj => obj.type === category.id);
+        // Random count between 2 and max available, but at least 2
+        const count = Math.floor(Math.random() * (categoryObjects.length - 2 + 1)) + 2;
+        
+        // Shuffle and pick objects
+        const shuffled = [...categoryObjects].sort(() => 0.5 - Math.random());
+        newObjects.push(...shuffled.slice(0, count));
+    });
+
+    return { objects: newObjects, categories: newCategories };
+};
+
+
+const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLevelComplete }) => {
   const [gameState, setGameState] = useState<GameState>("welcome")
   const [gamePhase, setGamePhase] = useState<GamePhase>("classifying");
+  
+  // State for the current randomized level
+  const [currentLevel, setCurrentLevel] = useState(levelTemplate);
+
   const [objects, setObjects] = useState<DroppedObject[]>([])
   const [draggedObject, setDraggedObject] = useState<GameObject | null>(null)
   const [score, setScore] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [showFeedback, setShowFeedback] = useState<string | null>(null)
-  const [completedCategories, setCompletedCategories] = useState<Set<string>>(new Set())
+  
+  const [countingCategoryIndex, setCountingCategoryIndex] = useState(0);
   const [countAnswers, setCountAnswers] = useState<CountAnswer>({});
 
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -48,33 +74,45 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
     return shuffled
   }
 
-  const isValidGameLevel = gameLevel && gameLevel.objects && gameLevel.categories
+  const isValidGameLevel = currentLevel && currentLevel.objects && currentLevel.categories
 
   const handleLevelComplete =
     onLevelComplete ||
     ((result) => {
       console.log("Level completed:", result)
     })
+  
+  const speak = (text: string) => {
+    if (soundEnabled && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
 
   const playSound = useCallback(
-    (type: "success" | "error" | "complete" | "drop") => {
+    (type: "success" | "error" | "complete" | "drop" | "info", text?: string) => {
       if (!soundEnabled) return
 
       const sounds = {
-        success: "🎉 ¡Correcto!",
-        error: "❌ Inténtalo de nuevo",
-        complete: "🌟 ¡Nivel completado!",
-        drop: "📦 Objeto soltado",
+        success: "¡Correcto!",
+        error: "Inténtalo de nuevo",
+        complete: "¡Nivel completado!",
+        drop: "",
+        info: text || "",
       }
+      
+      const message = sounds[type];
+      console.log(`🔊 ${message}`);
+      if (message) speak(message);
 
-      console.log(`🔊 ${sounds[type]}`)
-
-      if (type === "success" || type === "error") {
-        setShowFeedback(sounds[type])
+      if (type === "success" || type === "error" || type === 'info') {
+        setShowFeedback(message)
         setTimeout(() => setShowFeedback(null), 1500)
       }
     },
-    [soundEnabled],
+    [soundEnabled, speak],
   )
 
   const handleDragStart = (e: React.DragEvent, object: GameObject) => {
@@ -138,7 +176,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
         if (allObjectsPlaced && objects.length > 0) {
             const allCorrect = objects.every((obj) => obj.isCorrect);
             if(allCorrect) {
-                setShowFeedback("¡Todos clasificados! Ahora a contar...");
+                playSound("info", "¡Todos clasificados! Ahora, a contar.");
                 setTimeout(() => {
                     setGamePhase('counting');
                     setShowFeedback(null);
@@ -146,7 +184,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
             }
         }
     }
-  }, [objects, gamePhase]);
+  }, [objects, gamePhase, playSound]);
 
   const resetObject = (objectId: string) => {
     setObjects((prev) =>
@@ -155,7 +193,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
   }
   
   const handleCountAnswer = (categoryId: string, answer: number) => {
-    const correctCount = gameLevel.objects.filter(obj => obj.type === categoryId).length;
+    const correctCount = objects.filter(obj => obj.type === categoryId).length;
     const isCorrect = answer === correctCount;
     
     setCountAnswers(prev => ({
@@ -164,23 +202,30 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
     }));
 
     if(isCorrect) {
-        playSound("success");
+        playSound("success", `¡Correcto! Hay ${answer} ${categoryId.toLowerCase()}.`);
         setScore(prev => prev + 20); // Extra points for counting
+        
+        // Move to next question automatically
+        setTimeout(() => {
+            if (countingCategoryIndex < currentLevel.categories.length - 1) {
+                setCountingCategoryIndex(prev => prev + 1);
+            } else {
+                checkCompletion();
+            }
+        }, 1500);
+
     } else {
         playSound("error");
+        setAttempts(prev => prev + 1); // Only penalize incorrect attempts
     }
-    setAttempts(prev => prev + 1);
   }
 
   const checkCompletion = () => {
-    const allCategoriesCounted = gameLevel.categories.every(cat => countAnswers[cat.id]?.answer !== null);
-    if (!allCategoriesCounted) return;
-
-    const allCountsCorrect = gameLevel.categories.every(cat => countAnswers[cat.id]?.isCorrect);
+    const allCountsCorrect = currentLevel.categories.every(cat => countAnswers[cat.id]?.isCorrect);
     
     if (allCountsCorrect) {
       playSound("complete");
-      const totalPossibleAttempts = gameLevel.objects.length + gameLevel.categories.length;
+      const totalPossibleAttempts = currentLevel.objects.length + currentLevel.categories.length;
       const efficiency = totalPossibleAttempts / attempts;
       let stars = 1;
       if (efficiency >= 0.9) stars = 3;
@@ -191,26 +236,31 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
         handleLevelComplete({ score, stars });
       }, 1500);
     } else {
-       setShowFeedback("Algunos números no son correctos. ¡Revisa de nuevo!");
-       setTimeout(() => setShowFeedback(null), 2000);
+       playSound("info", "Algunos números no son correctos. ¡Revisa de nuevo!");
     }
   };
-
 
   const availableObjects = objects.filter((obj) => !obj.droppedInCategory)
   const getObjectsInCategory = (categoryId: string) => objects.filter((obj) => obj.droppedInCategory === categoryId)
 
+  const initializeLevel = useCallback(() => {
+    const setup = generateRandomLevelSetup(levelTemplate);
+    setCurrentLevel(setup);
+    const shuffledObjects = shuffleArray(setup.objects);
+    setObjects(shuffledObjects.map((obj) => ({ ...obj })));
+    setScore(0);
+    setAttempts(0);
+    setGamePhase('classifying');
+    setCountAnswers({});
+    setCountingCategoryIndex(0);
+  }, [levelTemplate]);
+  
   useEffect(() => {
-    if (gameState === "playing" && isValidGameLevel) {
-      const shuffledObjects = shuffleArray(gameLevel.objects)
-      setObjects(shuffledObjects.map((obj) => ({ ...obj })))
-      setScore(0)
-      setAttempts(0)
-      setCompletedCategories(new Set())
-      setGamePhase('classifying');
-      setCountAnswers({});
+    if (gameState === "playing") {
+      initializeLevel();
     }
-  }, [gameLevel, gameState, isValidGameLevel])
+  }, [gameState, initializeLevel]);
+
 
   if (!isValidGameLevel) {
     return (
@@ -235,7 +285,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
         <Card className="w-full max-w-2xl mx-auto shadow-2xl border-4 border-primary">
           <CardHeader className="text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
             <CardTitle className="text-4xl font-bold mb-2">🎯 ¡Clasifica y Cuenta! 🎯</CardTitle>
-            <p className="text-xl">Nivel {gameLevel.level}</p>
+            <p className="text-xl">Nivel {currentLevel.level}</p>
           </CardHeader>
           <CardContent className="p-8 text-center space-y-6">
             <div className="text-6xl mb-4">🎮</div>
@@ -265,7 +315,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
   }
 
   if (gameState === "completed") {
-      const totalPossibleAttempts = gameLevel.objects.length + gameLevel.categories.length;
+      const totalPossibleAttempts = currentLevel.objects.length + currentLevel.categories.length;
       const efficiency = totalPossibleAttempts > 0 ? totalPossibleAttempts / Math.max(attempts, totalPossibleAttempts) : 0;
       let stars = 1;
       if (efficiency >= 0.9) stars = 3;
@@ -277,7 +327,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
           <CardContent className="p-8 text-center space-y-6">
             <div className="text-8xl mb-4">🎉</div>
             <h2 className="text-4xl font-bold text-green-600 mb-4">¡Felicitaciones!</h2>
-            <p className="text-xl text-gray-700">Has completado el Nivel {gameLevel.level}</p>
+            <p className="text-xl text-gray-700">Has completado el Nivel {currentLevel.level}</p>
             <div className="bg-yellow-50 p-6 rounded-xl border-2 border-yellow-200">
               <div className="flex justify-center mb-4">
                 {[...Array(3)].map((_, i) => (
@@ -308,7 +358,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
           <CardContent className="p-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-gray-800">Nivel {gameLevel.level} 🎯</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Nivel {currentLevel.level} 🎯</h1>
                 <div className="bg-blue-100 px-4 py-2 rounded-full">
                   <span className="font-bold text-blue-800">Puntos: {score}</span>
                 </div>
@@ -330,7 +380,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
       </div>
 
       {showFeedback && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
           <div className="bg-white px-8 py-4 rounded-full shadow-2xl border-4 border-yellow-400 animate-bounce">
             <span className="text-2xl font-bold">{showFeedback}</span>
           </div>
@@ -343,10 +393,12 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
             <Card className="h-full bg-white/90 backdrop-blur-sm shadow-lg">
               <CardHeader>
                 <CardTitle className="text-center text-xl font-bold text-gray-800">🎒 Objetos para Clasificar</CardTitle>
-                <p className="text-center text-sm text-gray-600">Arrastra cada objeto a su categoría</p>
+                 <Button variant="ghost" size="sm" onClick={() => playSound('info', 'Arrastra cada objeto a su caja.')} className="text-muted-foreground mx-auto">
+                    <Volume2 className="mr-2 h-4 w-4" /> Escuchar
+                </Button>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {availableObjects.map((object) => (
                     <div
                       key={object.id}
@@ -366,10 +418,10 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
         )}
 
         <div className={gamePhase === 'classifying' ? 'lg:col-span-2' : 'lg:col-span-3'}>
-          <div className={`grid grid-cols-1 ${gameLevel.categories.length > 2 ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4`}>
-            {gameLevel.categories.map((category) => {
+          <div className={`grid grid-cols-1 ${currentLevel.categories.length > 2 ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4`}>
+            {currentLevel.categories.map((category) => {
               const objectsInCategory = getObjectsInCategory(category.id);
-              const isCounted = countAnswers[category.id]?.answer !== null;
+              const isCurrentCountingCategory = gamePhase === 'counting' && currentLevel.categories[countingCategoryIndex]?.id === category.id;
 
               return (
                 <Card key={category.id} className={`${category.color} border-4 transition-all duration-300`}>
@@ -412,19 +464,23 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
                         </div>
                       </div>
                     )}
-                    {gamePhase === 'counting' && (
-                        <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-400">
-                            <p className="font-bold text-center mb-2">¿Cuántos {category.name.toLowerCase()} hay?</p>
+                  </CardContent>
+                   {isCurrentCountingCategory && (
+                        <div className="mt-4 p-4 bg-white/50 rounded-lg">
+                             <Button variant="ghost" size="sm" onClick={() => speak(`¿Cuántos ${category.name.toLowerCase()} hay?`)} className="text-muted-foreground mx-auto flex items-center mb-2">
+                                <Volume2 className="mr-2 h-4 w-4" /> Escuchar pregunta
+                            </Button>
+                            <p className="font-bold text-center text-lg mb-3">¿Cuántos {category.name.toLowerCase()} hay?</p>
                             <div className="flex justify-center gap-2">
                                 {category.countOptions.map(option => {
                                     const answerState = countAnswers[category.id];
                                     const isSelected = answerState?.answer === option;
                                     let buttonClass = 'bg-white hover:bg-gray-100';
                                     if(isSelected) {
-                                        buttonClass = answerState.isCorrect ? 'bg-green-400' : 'bg-red-400';
+                                        buttonClass = answerState.isCorrect ? 'bg-green-400 text-white' : 'bg-red-400 text-white';
                                     }
                                     return (
-                                        <Button key={option} onClick={() => handleCountAnswer(category.id, option)} disabled={isCounted} className={buttonClass}>
+                                        <Button key={option} onClick={() => handleCountAnswer(category.id, option)} disabled={answerState?.isCorrect === true} className={buttonClass}>
                                             {option}
                                         </Button>
                                     )
@@ -432,18 +488,10 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel, onLevelComplete }) =
                             </div>
                         </div>
                     )}
-                  </CardContent>
                 </Card>
               )
             })}
           </div>
-           {gamePhase === 'counting' && (
-                <div className="mt-6 flex justify-center">
-                    <Button onClick={checkCompletion} size="lg" className="bg-green-500 hover:bg-green-600 text-white font-bold text-xl px-8 py-6 rounded-full">
-                        ¡Revisar!
-                    </Button>
-                </div>
-            )}
         </div>
       </div>
     </div>
