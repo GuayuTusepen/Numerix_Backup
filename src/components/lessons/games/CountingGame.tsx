@@ -27,47 +27,54 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [levelProgress, setLevelProgress] = useState<{ [key: number]: { stars: number; completed: boolean } }>({});
   const [isMuted, setIsMuted] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { activeProfile } = useProfile();
   const storageKey = activeProfile ? `countingGameProgress_${activeProfile.id}` : null;
+  
+  const playMusic = useCallback(async () => {
+    if (audioRef.current && audioRef.current.paused && !isMuted) {
+      try {
+        await audioRef.current.play();
+        setIsMusicPlaying(true);
+      } catch (error) {
+        console.error("Audio play failed:", error);
+        setIsMusicPlaying(false);
+      }
+    }
+  }, [isMuted]);
+
+  const pauseMusic = useCallback(() => {
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       audioRef.current = new Audio("/audio/inicio.mp3");
       audioRef.current.loop = true;
     }
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    const audio = audioRef.current;
-
-    const playAudio = async () => {
-      if (audio && gameState === 'playing' && !isMuted) {
-        try {
-          await audio.play();
-          if (!isMounted) {
-            audio.pause();
-          }
-        } catch (error) {
-          console.error("Audio play failed:", error);
-        }
-      }
-    };
-
-    if (gameState === 'playing' && !isMuted) {
-      playAudio();
-    } else {
-      audio?.pause();
-    }
-
+    
     return () => {
-      isMounted = false;
-      audio?.pause();
-    };
-  }, [gameState, isMuted]);
+        // Cleanup on unmount
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (gameState === 'playing') {
+        playMusic();
+    } else {
+        pauseMusic();
+    }
+  }, [gameState, playMusic, pauseMusic]);
   
   const speakNumber = useCallback((number: number) => {
     if (isMuted || !('speechSynthesis' in window)) return;
@@ -138,7 +145,7 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
 
   const completeLevel = (finalCorrectAnswers: number, finalScore: number) => {
     const accuracy = finalCorrectAnswers / totalQuestions;
-    let earnedStars = 1;
+    let earnedStars: 1 | 2 | 3 = 1;
     if (accuracy >= 0.95) earnedStars = 3;
     else if (accuracy >= 0.8) earnedStars = 2;
     
@@ -279,3 +286,5 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     </div>
   );
 };
+
+export default CountingGame;
