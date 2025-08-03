@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { LESSON_CATEGORIES } from '@/types/lesson';
 import type { Lesson } from '@/types/lesson';
@@ -54,6 +55,13 @@ export default function LessonPage() {
   const { updateLessonProgress, getLessonProgress } = useProgress();
   
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
+
+  useEffect(() => {
+    // This effect handles the redirection for specific activity types.
+    if (lesson && lesson.activityType === 'classify-and-count') {
+      router.replace(`/lessons/${lesson.id}/play`);
+    }
+  }, [lesson, router]);
   
   const handleGameExit = () => {
     // This function will be called by game components to signal returning to the lesson/dashboard
@@ -130,9 +138,8 @@ export default function LessonPage() {
       case 'game':
         return <CountingGame onGameExit={handleGameExit} />;
       case 'classify-and-count':
-        // Redirect to the level selection page for this game
-        router.replace(`/lessons/${lessonId}/play`);
-        return null; // Render nothing while redirecting
+        // Render a loading state or null while redirecting
+        return <p className="text-center p-8">Cargando juego...</p>; 
       case 'placeholder':
       default:
         return <LessonContentPlaceholder lesson={lesson} onComplete={handlePlaceholderComplete} />;
@@ -174,5 +181,3 @@ export default function LessonPage() {
     </div>
   );
 }
-
-    
