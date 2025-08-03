@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Home, Volume2, VolumeX } from "lucide-react"
+import { Home } from "lucide-react"
 import FingerDisplay from "./FingerDisplay"
 
 interface GameLevelProps {
@@ -34,52 +34,6 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
-  const [isMuted, setIsMuted] = useState(false);
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      audioRef.current = new Audio('/sounds/contar_sound.mp3');
-      audioRef.current.loop = true;
-    }
-     return () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current = null;
-        }
-    };
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (!isMuted) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.error("Audio play failed:", error);
-        });
-      }
-      
-      return () => {
-        playPromise.then(() => {
-          audio.pause();
-        }).catch(error => {
-          // Can be ignored
-        });
-      };
-    } else {
-      audio.pause();
-    }
-  }, [isMuted]);
-
-
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-  };
-
 
   // Generate questions
   useEffect(() => {
@@ -203,11 +157,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
                 Puntuación: {score}/{currentQuestion + (showFeedback ? 1 : 0)}
               </div>
             </div>
-             <Button onClick={toggleMute} variant="outline" size="icon" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
-              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-            </Button>
           </div>
-
 
           <div className={`px-4 py-2 rounded-full text-white font-semibold ${config.color}`}>{config.name}</div>
         </div>
