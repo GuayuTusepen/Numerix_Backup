@@ -20,7 +20,7 @@ export default function FingerDisplay({
   const renderFingerImage = (fingers: number) => {
     const imageUrl = fingerImages[fingers] || 'https://placehold.co/128x128.png'; // Fallback image
     return (
-      <div className={`text-center ${animate ? "animate-slow-pulse" : ""}`}>
+      <div className={`text-center ${animate ? "animate-slow-bounce" : ""}`}>
         <div className="relative w-32 h-32 mx-auto mb-4 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-200 overflow-hidden">
            <Image 
               src={imageUrl} 
@@ -39,26 +39,19 @@ export default function FingerDisplay({
   }
 
   const renderResultImage = (totalFingers: number) => {
-    const imageUrl = totalFingers <= 10 ? fingerImages[totalFingers] : 'https://placehold.co/160x160.png';
-    const altText = totalFingers <= 10 ? `Imagen de ${totalFingers} dedos` : `${totalFingers} dedos`;
+    const imageUrl = fingerImages[totalFingers] || 'https://placehold.co/160x160.png';
+    const altText = `Imagen de ${totalFingers} dedos`;
 
     return (
         <div className="relative w-40 h-40 mx-auto mb-4 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-200 overflow-hidden">
-            {totalFingers > 10 ? (
-                 <div className="text-center">
-                    <div className="text-5xl mb-2">🙌🙌</div>
-                    <div className="text-xs text-gray-600">{altText}</div>
-                </div>
-            ) : (
-                <Image 
-                    src={imageUrl} 
-                    alt={altText} 
-                    width={160} 
-                    height={160} 
-                    className="object-cover"
-                    data-ai-hint={`fingers ${totalFingers}`}
-                />
-            )}
+            <Image 
+                src={imageUrl} 
+                alt={altText} 
+                width={160} 
+                height={160} 
+                className="object-cover"
+                data-ai-hint={`fingers ${totalFingers}`}
+            />
         </div>
     );
   }
