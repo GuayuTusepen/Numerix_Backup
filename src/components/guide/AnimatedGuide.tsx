@@ -30,8 +30,8 @@ export function AnimatedGuide() {
             <Image 
               src="/guide/friendly-owl.png"
               alt="Guía Amigable" 
-              width={64} 
-              height={64} 
+              width={56} 
+              height={56} 
               className="rounded-full"
               data-ai-hint="owl mascot"
             />
