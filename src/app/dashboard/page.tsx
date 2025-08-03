@@ -49,9 +49,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12">
       <header className="text-center space-y-2">
-        <h1 className="text-5xl font-extrabold tracking-tight text-foreground">
+        <h1 className="text-5xl font-extrabold tracking-tight text-foreground" style={{ color: '#000000' }}>
           ¡{greeting}, {activeProfile.name}!
-          <span className="text-2xl align-super ml-2" style={{ color: '#2df88e' }}>Beta</span>
+          <span className="text-2xl align-super ml-2" style={{ color: '#16a34a' }}>Beta</span>
         </h1>
         <p className="text-xl text-muted-foreground flex items-center justify-center">
           <Sparkles className="mr-2 h-6 w-6 text-yellow-400" />
