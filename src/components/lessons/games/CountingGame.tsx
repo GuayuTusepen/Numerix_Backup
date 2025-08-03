@@ -29,6 +29,7 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
   const [isMuted, setIsMuted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isPlayingRef = useRef(false);
   const storageKey = activeProfile ? `countingGameProgress_${activeProfile.id}` : null;
 
   useEffect(() => {
@@ -48,33 +49,37 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     return () => {
         if (audioRef.current) {
             audioRef.current.pause();
+            isPlayingRef.current = false;
         }
     }
   }, [storageKey]);
 
-  const playMusic = async () => {
-    if (audioRef.current && !isMuted) {
+  const playMusic = useCallback(async () => {
+    if (audioRef.current && !isPlayingRef.current && !isMuted) {
       try {
         await audioRef.current.play();
+        isPlayingRef.current = true;
       } catch (error) {
         console.error("Error al reproducir audio:", error);
+        isPlayingRef.current = false;
       }
     }
-  };
+  }, [isMuted]);
 
-  const pauseMusic = () => {
-    if (audioRef.current) {
+  const pauseMusic = useCallback(() => {
+    if (audioRef.current && isPlayingRef.current) {
       audioRef.current.pause();
+      isPlayingRef.current = false;
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && !isMuted) {
       playMusic();
     } else {
       pauseMusic();
     }
-  }, [gameState, isMuted]);
+  }, [gameState, isMuted, playMusic, pauseMusic]);
 
 
   const toggleMute = () => {
