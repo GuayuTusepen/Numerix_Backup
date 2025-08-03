@@ -58,8 +58,8 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     id: 'geometry',
     title: 'Tierra de Formas',
     description: 'Descubre diferentes formas y sus nombres.',
-    iconSrc: '/icons/geometry-icon.png',
-    iconHint: 'triangle square circle',
+    iconSrc: '/icons/eart_forms_icon.jpg',
+    iconHint: 'earth shapes',
     lessons: [
       { id: 'basic-shapes', title: 'Formas Básicas', description: 'Aprende círculos, cuadrados y triángulos.', iconSrc: '/icons/basic-shapes-icon.png', iconHint: 'square circle', difficulty: 'easy', activityType: 'placeholder' },
       { id: 'more-shapes', title: 'Más Formas', description: 'Explora rectángulos, estrellas y corazones.', iconSrc: '/icons/more-shapes-icon.png', iconHint: 'star heart', difficulty: 'medium', activityType: 'placeholder' },
