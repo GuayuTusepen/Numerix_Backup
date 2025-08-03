@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { GameObject, GameLevel, GameCategory } from "@/data/classifyAndCountGameData"
 import { Volume2, ChevronRight, VolumeX } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 
 interface Props {
@@ -66,12 +67,15 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   const [countAnswers, setCountAnswers] = useState<CountAnswer>({});
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const initialVolume = 0.5; // Volumen normal de la música
+  const duckedVolume = 0.1; // Volumen de la música cuando habla el narrador
 
   useEffect(() => {
     // This effect runs only once on the client side
     if (typeof window !== 'undefined') {
       audioRef.current = new Audio('/sounds/Drag and Dorp funny sound.mp3');
       audioRef.current.loop = true;
+      audioRef.current.volume = initialVolume;
     }
   }, []);
 
@@ -109,6 +113,19 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'es-ES';
       utterance.rate = 0.9;
+      
+      // Bajar el volumen de la música antes de hablar
+      if (audioRef.current) {
+        audioRef.current.volume = duckedVolume;
+      }
+
+      // Cuando la voz termine, restaurar el volumen
+      utterance.onend = () => {
+        if (audioRef.current) {
+          audioRef.current.volume = initialVolume;
+        }
+      };
+      
       window.speechSynthesis.speak(utterance);
     }
   }
@@ -224,7 +241,8 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
     }));
 
     if(isCorrect) {
-        playSound("success", `¡Correcto! Hay ${answer} ${category.name.toLowerCase()}.`);
+        const category = currentLevel.categories.find(c => c.id === categoryId);
+        playSound("success", `¡Correcto! Hay ${answer} ${category?.name.toLowerCase()}.`);
         setScore(prev => prev + 20); // Extra points for counting
         
         // Move to next question automatically
