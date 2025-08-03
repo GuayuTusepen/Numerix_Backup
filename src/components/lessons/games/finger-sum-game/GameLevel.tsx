@@ -43,35 +43,37 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
       audioRef.current = new Audio('/sounds/contar_sound.mp3');
       audioRef.current.loop = true;
     }
+     return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+    };
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
     const audio = audioRef.current;
+    if (!audio) return;
 
-    const playAudio = async () => {
-        if (audio && !isMuted) {
-            try {
-                await audio.play();
-                if (!isMounted) {
-                    audio.pause();
-                }
-            } catch (error) {
-                console.error("Audio play failed, possibly interrupted.", error);
-            }
-        }
-    };
-
-    playAudio();
-
-    return () => {
-        isMounted = false;
-        if (audio) {
-            audio.pause();
-            audio.currentTime = 0; // Reset for next play
-        }
-    };
-  }, [isMuted]); // Re-run effect if isMuted changes
+    if (!isMuted) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Audio play failed:", error);
+        });
+      }
+      
+      return () => {
+        playPromise.then(() => {
+          audio.pause();
+        }).catch(error => {
+          // Can be ignored
+        });
+      };
+    } else {
+      audio.pause();
+    }
+  }, [isMuted]);
 
 
   const toggleMute = () => {

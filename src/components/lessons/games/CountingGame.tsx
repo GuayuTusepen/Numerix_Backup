@@ -27,31 +27,11 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [levelProgress, setLevelProgress] = useState<{ [key: number]: { stars: number; completed: boolean } }>({});
   const [isMuted, setIsMuted] = useState(false);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { activeProfile } = useProfile();
   const storageKey = activeProfile ? `countingGameProgress_${activeProfile.id}` : null;
-  
-  const playMusic = useCallback(async () => {
-    if (audioRef.current && audioRef.current.paused && !isMuted) {
-      try {
-        await audioRef.current.play();
-        setIsMusicPlaying(true);
-      } catch (error) {
-        console.error("Audio play failed:", error);
-        setIsMusicPlaying(false);
-      }
-    }
-  }, [isMuted]);
-
-  const pauseMusic = useCallback(() => {
-    if (audioRef.current && !audioRef.current.paused) {
-      audioRef.current.pause();
-      setIsMusicPlaying(false);
-    }
-  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -60,22 +40,38 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     }
     
     return () => {
-        // Cleanup on unmount
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current = null;
         }
     }
   }, []);
-  
+
   useEffect(() => {
-    if (gameState === 'playing') {
-        playMusic();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (gameState === 'playing' && !isMuted) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Audio play failed:", error);
+        });
+      }
+
+      return () => {
+        // Instead of pausing directly, we let the promise resolve and then pause.
+        playPromise.then(() => {
+          audio.pause();
+        }).catch(error => {
+          // This error can be ignored as we are intentionally stopping playback on cleanup.
+        });
+      };
     } else {
-        pauseMusic();
+      audio.pause();
     }
-  }, [gameState, playMusic, pauseMusic]);
-  
+  }, [gameState, isMuted]);
+
   const speakNumber = useCallback((number: number) => {
     if (isMuted || !('speechSynthesis' in window)) return;
     const utterance = new SpeechSynthesisUtterance(number.toString());
