@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
 import FingerSumGame from '@/components/lessons/games/finger-sum-game/FingerSumGame';
+import FingerSubtractionGame from '@/components/lessons/games/finger-subtraction-game/FingerSubtractionGame';
 import { gameData } from '@/data/countingGameData';
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -231,6 +232,8 @@ export default function LessonPage() {
         return <CountingGame onGameExit={handleGameExit} />;
       case 'finger-sum-game':
         return <FingerSumGame lessonId={lesson.id} onGameExit={handleGameExit} />;
+      case 'finger-subtraction-game':
+        return <FingerSubtractionGame lessonId={lesson.id} onGameExit={handleGameExit} />;
       case 'classify-and-count':
         return <p className="text-center p-8">Cargando juego...</p>;
       case 'external-link':
@@ -241,7 +244,7 @@ export default function LessonPage() {
     }
   };
 
-  const isFullScreenGame = lesson.activityType === 'game' || lesson.activityType === 'finger-sum-game';
+  const isFullScreenGame = lesson.activityType === 'game' || lesson.activityType === 'finger-sum-game' || lesson.activityType === 'finger-subtraction-game';
 
   return (
     <div className="container mx-auto py-8 px-4">

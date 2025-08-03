@@ -8,7 +8,7 @@ export interface Lesson {
   iconSrc: string; // Path to image icon in /public
   backgroundSrc: string; // Path to background image for the lesson card
   iconHint: string; // For data-ai-hint
-  activityType: 'game' | 'classify-and-count' | 'external-link' | 'placeholder' | 'finger-sum-game';
+  activityType: 'game' | 'classify-and-count' | 'external-link' | 'placeholder' | 'finger-sum-game' | 'finger-subtraction-game';
   difficulty: 'easy' | 'medium' | 'hard';
   externalUrl?: string; // Add this for external links
 }
@@ -100,7 +100,7 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
         activityType: 'external-link',
         externalUrl: 'https://es.educaplay.com/recursos-educativos/18889552-juego_de_restas_del_1_al_10.html'
       },
-      { id: 'subtraction-from-20', title: 'Restas hasta 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/logo_resta_simple.jpg', backgroundSrc: '/icons/fondo_restas_complejas.jpg', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'subtraction-from-20', title: 'Restas hasta 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/logo_resta_simple.jpg', backgroundSrc: '/icons/fondo_restas_complejas.jpg', iconHint: 'file minus', difficulty: 'medium', activityType: 'finger-subtraction-game' },
     ],
   },
   {
