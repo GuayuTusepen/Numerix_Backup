@@ -34,35 +34,6 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
-  const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const audio = new Audio('/sounds/contar_sound.mp3');
-      audio.loop = true;
-      audio.volume = 0.3;
-      audioRef.current = audio;
-    }
-
-    return () => {
-      audioRef.current?.pause();
-    }
-  }, []);
-
-  const playMusic = useCallback(() => {
-    if (audioRef.current && !isMuted) {
-      audioRef.current.play().catch(e => console.error("Error playing music:", e));
-    }
-  }, [isMuted]);
-
-  const pauseMusic = useCallback(() => {
-    audioRef.current?.pause();
-  }, []);
-  
-  useEffect(() => {
-    playMusic();
-  }, [playMusic]);
 
   // Generate questions
   useEffect(() => {
@@ -252,7 +223,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
         </Card>
 
         <div className="text-center mt-6">
-          <div className="text-4xl animate-slow-pulse">🧙‍♂️</div>
+          <div className="text-6xl animate-slow-pulse">🧙‍♂️</div>
           <div className="text-white font-medium mt-2">
             {showFeedback ? (isCorrect ? "¡Eres increíble! ✨" : "¡Sigue intentando! 💪") : "¡Tú puedes hacerlo! 🌟"}
           </div>

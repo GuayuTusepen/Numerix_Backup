@@ -21,7 +21,7 @@ export default function FingerDisplay({
     const imageUrl = fingerImages[fingers] || 'https://placehold.co/128x128.png'; // Fallback image
     return (
       <div className={`text-center ${animate ? "animate-slow-bounce" : ""}`}>
-        <div className="relative w-32 h-32 mx-auto mb-4 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-200 overflow-hidden">
+        <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-2 sm:mb-4 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-200 overflow-hidden">
            <Image 
               src={imageUrl} 
               alt={`Imagen de ${fingers} dedo(s)`} 
@@ -31,7 +31,7 @@ export default function FingerDisplay({
               data-ai-hint={`fingers ${fingers}`}
             />
         </div>
-        <div className="text-3xl font-bold text-gray-700 bg-white/80 rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+        <div className="text-2xl sm:text-3xl font-bold text-gray-700 bg-white/80 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto">
           {fingers}
         </div>
       </div>
@@ -43,7 +43,7 @@ export default function FingerDisplay({
     const altText = `Imagen de ${totalFingers} dedos`;
 
     return (
-        <div className="relative w-40 h-40 mx-auto mb-4 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-200 overflow-hidden">
+        <div className="relative w-28 h-28 sm:w-40 sm:h-40 mx-auto mb-2 sm:mb-4 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-200 overflow-hidden">
             <Image 
                 src={imageUrl} 
                 alt={altText} 
@@ -57,12 +57,12 @@ export default function FingerDisplay({
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 py-8 flex-wrap">
+    <div className="flex items-center justify-center gap-2 sm:gap-4 py-4 sm:py-8 flex-wrap">
       <div className={`${animate ? "animate-slow-bounce" : ""} transition-all duration-500`}>
         {renderFingerImage(leftFingers)}
       </div>
 
-      <div className="text-6xl font-bold text-purple-600 animate-slow-pulse mx-2">+</div>
+      <div className="text-4xl sm:text-6xl font-bold text-purple-600 animate-slow-pulse mx-1 sm:mx-2">+</div>
 
       <div
         className={`${animate ? "animate-slow-bounce" : ""} transition-all duration-500`}
@@ -73,10 +73,10 @@ export default function FingerDisplay({
 
       {showEquation && (
         <>
-          <div className="text-6xl font-bold text-purple-600 mx-2">=</div>
+          <div className="text-4xl sm:text-6xl font-bold text-purple-600 mx-1 sm:mx-2">=</div>
           <div className="text-center">
             {renderResultImage(leftFingers + rightFingers)}
-            <div className="text-4xl font-bold text-green-600 bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
+            <div className="text-3xl sm:text-4xl font-bold text-green-600 bg-green-100 rounded-full w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-2">
               {leftFingers + rightFingers}
             </div>
           </div>
