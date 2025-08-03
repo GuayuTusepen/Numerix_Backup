@@ -50,19 +50,27 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     };
   }, []);
   
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (!isMuted) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.error("Error al reproducir audio:", error);
-        });
+  const playMusic = async () => {
+    if (audioRef.current && !isMuted) {
+      try {
+        await audioRef.current.play();
+      } catch (error) {
+        console.error("Error al reproducir audio:", error);
       }
+    }
+  };
+
+  const pauseMusic = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  };
+
+  useEffect(() => {
+    if (!isMuted) {
+      playMusic();
     } else {
-      audio.pause();
+      pauseMusic();
     }
   }, [isMuted]);
 

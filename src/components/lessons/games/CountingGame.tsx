@@ -52,30 +52,33 @@ const CountingGame = ({ onGameExit }: CountingGameProps) => {
     }
   }, [storageKey]);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-  
-    if (gameState === 'playing' && !isMuted) {
-      // play() returns a promise, which can be used to avoid interruptions
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          // Autoplay was prevented.
-          console.error("Error al reproducir audio:", error);
-        });
+  const playMusic = async () => {
+    if (audioRef.current && !isMuted) {
+      try {
+        await audioRef.current.play();
+      } catch (error) {
+        console.error("Error al reproducir audio:", error);
       }
+    }
+  };
+
+  const pauseMusic = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  };
+
+  useEffect(() => {
+    if (gameState === 'playing') {
+      playMusic();
     } else {
-      audio.pause();
+      pauseMusic();
     }
   }, [gameState, isMuted]);
 
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-    }
   };
 
   const saveProgress = (level: number, starsEarned: number) => {
