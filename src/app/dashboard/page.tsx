@@ -30,7 +30,7 @@ export default function DashboardPage() {
   if (selectedCategory) {
     return (
       <div className="space-y-8">
-        <Button variant="ghost" onClick={() => setSelectedCategory(null)} className="text-accent hover:text-accent/90">
+        <Button variant="ghost" onClick={() => setSelectedCategory(null)} className="text-foreground hover:text-foreground/90">
           <ArrowLeft className="mr-2 h-5 w-5" /> Volver a Categorías
         </Button>
         <header className="text-center">
@@ -49,11 +49,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-12">
       <header className="text-center space-y-2">
-        <h1 className="text-5xl font-extrabold tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            ¡{greeting}, {activeProfile.name}!
-          </span>
-          <span className="text-2xl align-super text-muted-foreground ml-2">Beta</span>
+        <h1 className="text-5xl font-extrabold tracking-tight text-foreground">
+          ¡{greeting}, {activeProfile.name}!
+          <span className="text-2xl align-super ml-2" style={{ color: '#2df88e' }}>Beta</span>
         </h1>
         <p className="text-xl text-muted-foreground flex items-center justify-center">
           <Sparkles className="mr-2 h-6 w-6 text-yellow-400" />
