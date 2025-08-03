@@ -37,47 +37,41 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
   const [isMuted, setIsMuted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const isPlayingRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       audioRef.current = new Audio('/sounds/contar_sound.mp3');
       audioRef.current.loop = true;
     }
-     return () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            isPlayingRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const audio = audioRef.current;
+
+    const playAudio = async () => {
+        if (audio && !isMuted) {
+            try {
+                await audio.play();
+                if (!isMounted) {
+                    audio.pause();
+                }
+            } catch (error) {
+                console.error("Audio play failed, possibly interrupted.", error);
+            }
         }
     };
-  }, []);
-  
-  const playMusic = useCallback(async () => {
-    if (audioRef.current && !isPlayingRef.current && !isMuted) {
-      try {
-        await audioRef.current.play();
-        isPlayingRef.current = true;
-      } catch (error) {
-        console.error("Error al reproducir audio:", error);
-        isPlayingRef.current = false;
-      }
-    }
-  }, [isMuted]);
 
-  const pauseMusic = useCallback(() => {
-    if (audioRef.current && isPlayingRef.current) {
-      audioRef.current.pause();
-      isPlayingRef.current = false;
-    }
-  }, []);
-  
-  useEffect(() => {
-    if (!isMuted) {
-      playMusic();
-    } else {
-      pauseMusic();
-    }
-  }, [isMuted, playMusic, pauseMusic]);
+    playAudio();
+
+    return () => {
+        isMounted = false;
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0; // Reset for next play
+        }
+    };
+  }, [isMuted]); // Re-run effect if isMuted changes
 
 
   const toggleMute = () => {
