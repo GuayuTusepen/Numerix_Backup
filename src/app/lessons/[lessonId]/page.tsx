@@ -6,25 +6,40 @@ import { LESSON_CATEGORIES } from '@/types/lesson';
 import type { Lesson } from '@/types/lesson';
 import { Button } from '@/components/ui/button';
 import { useProgress } from '@/contexts/ProgressContext';
-import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle, Star, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
-import { gameData } from '@/data/countingGameData'; // Importar los datos del juego
+import { gameData } from '@/data/countingGameData';
 import { getLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
 
 // Placeholder for other lesson content components
-function LessonContentPlaceholder({ lesson }: { lesson: Lesson }) {
+function LessonContentPlaceholder({ lesson, onComplete }: { lesson: Lesson, onComplete: () => void }) {
+  const currentProgress = useProgress().getLessonProgress(lesson.id);
+  
   return (
-    <div className="p-6 bg-muted/30 rounded-lg min-h-[200px] flex flex-col items-center justify-center text-center">
-      <Zap size={48} className="text-primary mb-4" />
-      <h3 className="text-2xl font-semibold mb-2">Contenido Interactivo para "{lesson.title}"</h3>
-      <p className="text-muted-foreground">¡Aquí es donde ocurre el aprendizaje divertido!</p>
-      <p className="text-sm mt-4">(Las actividades reales de la lección estarán aquí)</p>
-    </div>
+    <>
+      <CardContent className="p-6 md:p-8">
+        <div className="p-6 bg-muted/30 rounded-lg min-h-[200px] flex flex-col items-center justify-center text-center">
+          <Zap size={48} className="text-primary mb-4" />
+          <h3 className="text-2xl font-semibold mb-2">Contenido Interactivo para "{lesson.title}"</h3>
+          <p className="text-muted-foreground">¡Aquí es donde ocurre el aprendizaje divertido!</p>
+          <p className="text-sm mt-4">(Las actividades reales de la lección estarán aquí)</p>
+        </div>
+      </CardContent>
+      <CardFooter className="p-6 md:p-8 bg-muted/30">
+        <Button 
+          size="lg" 
+          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
+          onClick={onComplete}
+          disabled={currentProgress?.completed && currentProgress.stars === 3}
+        >
+          {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
+        </Button>
+      </CardFooter>
+    </>
   );
 }
 
@@ -40,34 +55,31 @@ export default function LessonPage() {
   
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
   
-  const handleCompleteLesson = () => {
+  const handleGameExit = () => {
+    // This function will be called by game components to signal returning to the lesson/dashboard
+    // For "count-to-10", it also saves progress.
     if (lessonId === 'count-to-10') {
-        if (!activeProfile) {
-            toast({
-                variant: "destructive",
-                title: "Error de perfil",
-                description: "No se encontró un perfil activo para guardar el progreso.",
-            });
-            return;
-        }
+      if (!activeProfile) {
+          toast({
+              variant: "destructive",
+              title: "Error de perfil",
+              description: "No se encontró un perfil activo para guardar el progreso.",
+          });
+          return;
+      }
       const gameStorageKey = `countingGameProgress_${activeProfile.id}`;
       const gameProgress = getLocalStorageItem<any>(gameStorageKey, {});
       const totalLevels = gameData.levels.length;
       
-      // Correct logic to check if all levels are perfect
-      let allLevelsArePerfect = true;
+      let allLevelsArePerfect = totalLevels > 0;
       let completedLevelsCount = 0;
-      if (totalLevels === 0) {
-        allLevelsArePerfect = false; // No levels, no perfection.
-      } else {
-        for (const level of gameData.levels) {
-          const levelProgress = gameProgress[level.id];
-          if (!levelProgress || levelProgress.stars !== 3) {
-            allLevelsArePerfect = false;
-          }
-          if (levelProgress?.completed) {
-            completedLevelsCount++;
-          }
+      for (const level of gameData.levels) {
+        const levelProgress = gameProgress[level.id];
+        if (!levelProgress || levelProgress.stars !== 3) {
+          allLevelsArePerfect = false;
+        }
+        if (levelProgress?.completed) {
+          completedLevelsCount++;
         }
       }
 
@@ -83,16 +95,19 @@ export default function LessonPage() {
         title: "¡Progreso Guardado!",
         description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
       });
-    } else {
+    }
+     router.push('/dashboard');
+  };
+
+  const handlePlaceholderComplete = () => {
       const stars = (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3);
       updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
       toast({
         title: "¡Lección Completada!",
         description: `Ganaste ${stars} estrella(s) por "${lesson?.title}". ¡Buen trabajo!`,
       });
-    }
-     router.push('/dashboard');
-  };
+      router.push('/dashboard');
+  }
 
   if (!lesson) {
     return (
@@ -111,25 +126,17 @@ export default function LessonPage() {
   const currentProgress = getLessonProgress(lessonId);
 
   const renderLessonContent = () => {
-    if (lesson.id === 'count-to-10') {
-      return <CountingGame onGameExit={handleCompleteLesson} />;
+    switch (lesson.activityType) {
+      case 'game':
+        return <CountingGame onGameExit={handleGameExit} />;
+      case 'classify-and-count':
+        // Redirect to the level selection page for this game
+        router.replace(`/lessons/${lessonId}/play`);
+        return null; // Render nothing while redirecting
+      case 'placeholder':
+      default:
+        return <LessonContentPlaceholder lesson={lesson} onComplete={handlePlaceholderComplete} />;
     }
-    
-    return (
-      <>
-        <LessonContentPlaceholder lesson={lesson} />
-        <CardFooter className="p-6 md:p-8 bg-muted/30">
-          <Button 
-            size="lg" 
-            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-3 rounded-lg shadow-md transition-transform hover:scale-105"
-            onClick={() => handleCompleteLesson()}
-            disabled={currentProgress?.completed && currentProgress.stars === 3}
-          >
-            {currentProgress?.completed ? '¡Intenta de Nuevo por Más Estrellas!' : '¡Marcar como Completada y Obtener Estrellas!'}
-          </Button>
-        </CardFooter>
-      </>
-    );
   };
 
 
@@ -144,9 +151,7 @@ export default function LessonPage() {
           <CardTitle className="text-4xl font-bold text-primary-foreground text-center">{lesson.title}</CardTitle>
           <CardDescription className="text-lg text-primary-foreground/90 text-center mt-1">{lesson.description}</CardDescription>
         </CardHeader>
-
-        <CardContent className="p-0 sm:p-0">
-          {currentProgress?.completed && lesson.id !== 'count-to-10' && (
+          {currentProgress?.completed && lesson.activityType !== 'game' && lesson.activityType !== 'classify-and-count' && (
              <div className="m-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md text-green-700">
                 <div className="flex items-center">
                   <CheckCircle className="h-6 w-6 mr-3" />
@@ -165,8 +170,9 @@ export default function LessonPage() {
             </div>
           )}
           {renderLessonContent()}
-        </CardContent>
       </Card>
     </div>
   );
 }
+
+    
