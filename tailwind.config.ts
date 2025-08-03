@@ -11,6 +11,7 @@ export default {
   	extend: {
       fontFamily: {
         zto: ['ZTOFont', 'sans-serif'],
+        tipografica: ['Tipografica', 'sans-serif'],
       },
   		colors: {
   			background: 'hsl(var(--background))',

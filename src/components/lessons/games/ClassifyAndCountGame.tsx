@@ -431,7 +431,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   if (gameState === "welcome") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 flex items-center justify-center p-4">
-        <Card className="w-full max-w-2xl mx-auto shadow-2xl border-4 border-primary">
+        <Card className="w-full max-w-2xl mx-auto shadow-2xl border-4 border-primary font-tipografica">
           <CardHeader className="text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg p-4">
             <CardTitle className="text-2xl md:text-4xl font-bold mb-1">🎯 ¡Clasifica y Cuenta! 🎯</CardTitle>
             <p className="text-lg md:text-xl">Nivel {currentLevel.level}</p>
@@ -448,7 +448,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
               </ul>
             </div>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button onClick={() => setGameState("playing")} className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 text-lg font-bold rounded-full shadow-lg transform hover:scale-105 transition-all">
+              <Button onClick={() => setGameState("playing")} className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 text-lg font-bold rounded-full shadow-lg transform hover:scale-105 transition-all font-tipografica">
                 🚀 ¡Empezar a Jugar!
               </Button>
               <Button onClick={() => setSoundEnabled(!soundEnabled)} variant="outline" className="px-5 py-3 text-lg rounded-full">
@@ -469,7 +469,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
       else if (efficiency >= 0.7) stars = 2;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-200 via-blue-200 to-purple-300 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-200 via-blue-200 to-purple-300 flex items-center justify-center p-4 font-tipografica">
         <Card className="w-full max-w-2xl mx-auto shadow-2xl">
           <CardContent className="p-6 md:p-8 text-center space-y-4">
             <div className="text-7xl md:text-8xl mb-2">🎉</div>
@@ -488,7 +488,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
             </div>
              <Button
               onClick={() => onLevelComplete({score, stars})}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 text-lg font-bold rounded-full"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 text-lg font-bold rounded-full font-tipografica"
             >
               Volver a Niveles
             </Button>
@@ -499,7 +499,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-2 sm:p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-2 sm:p-4 font-tipografica">
       <div className="max-w-6xl mx-auto mb-4">
         <Card className="bg-white/90 backdrop-blur-sm shadow-lg">
           <CardContent className="p-3 sm:p-4">
@@ -575,7 +575,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
                     </Card>
                 </div>
             )}
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {currentLevel.categories.map((category, index) => {
               const objectsInCategory = getObjectsInCategory(category.id);
               const isCurrentCountingCategory = gamePhase === 'counting' && countingCategoryIndex === index;
@@ -641,7 +641,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
                                         buttonClass = answerState.isCorrect ? 'bg-green-400 text-white hover:bg-green-400' : 'bg-red-400 text-white hover:bg-red-400';
                                     }
                                     return (
-                                        <Button key={option} onClick={() => handleCountAnswer(category.id, option)} disabled={!isCurrentCountingCategory || answerState?.isCorrect === true} className={cn("text-lg font-bold w-10 h-10 sm:w-12 sm:h-12 rounded-full", buttonClass)}>
+                                        <Button key={option} onClick={() => handleCountAnswer(category.id, option)} disabled={!isCurrentCountingCategory || answerState?.isCorrect === true} className={cn("text-lg font-bold w-10 h-10 sm:w-12 sm:h-12 rounded-full font-tipografica", buttonClass)}>
                                             {option}
                                         </Button>
                                     )
