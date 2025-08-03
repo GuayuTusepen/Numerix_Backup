@@ -9,9 +9,10 @@ import FingerDisplay from "./FingerDisplay"
 
 interface TutorialProps {
   onComplete: () => void
+  onExit: () => void;
 }
 
-export default function Tutorial({ onComplete }: TutorialProps) {
+export default function Tutorial({ onComplete, onExit }: TutorialProps) {
   const [step, setStep] = useState(0)
 
   const tutorialSteps = [
@@ -67,7 +68,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Button
-            onClick={onComplete}
+            onClick={onExit}
             variant="outline"
             className="bg-white/20 border-white/30 text-white hover:bg-white/30"
           >
@@ -79,10 +80,10 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           </div>
         </div>
 
-        <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl max-w-3xl mx-auto">
+        <Card className="p-6 sm:p-8 bg-white/95 backdrop-blur-sm shadow-2xl max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">{currentStep.title}</h2>
-            <p className="text-xl text-gray-600 leading-relaxed">{currentStep.content}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">{currentStep.title}</h2>
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">{currentStep.content}</p>
           </div>
 
           {currentStep.showFingers && (

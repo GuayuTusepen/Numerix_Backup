@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Volume2, VolumeX, Play, Lock } from "lucide-react"
+import { Play, Lock } from "lucide-react"
 import Tutorial from "./Tutorial"
 import GameLevel from "./GameLevel"
 import Results from "./Results"
@@ -23,7 +23,6 @@ interface FingerSumGameProps {
 export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGameProps) {
   const [gameState, setGameState] = useState<GameState>("menu")
   const [difficulty, setDifficulty] = useState<Difficulty>("easy")
-  const [musicEnabled, setMusicEnabled] = useState(false)
   const [score, setScore] = useState(0)
   const [totalQuestions, setTotalQuestions] = useState(0)
   
@@ -119,16 +118,12 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
     setGameState("results")
   }
 
-  const toggleMusic = () => {
-    setMusicEnabled(!musicEnabled)
-  }
-
   const isLevelLocked = (level: Difficulty) => {
     return !unlockedLevels.includes(level)
   }
 
   if (gameState === "tutorial") {
-    return <Tutorial onComplete={handleTutorialComplete} />
+    return <Tutorial onComplete={handleTutorialComplete} onExit={() => setGameState("menu")} />
   }
 
   if (gameState === "playing") {
@@ -180,26 +175,20 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
-          <Button onClick={onGameExit} variant="ghost" className="text-white hover:bg-white/20">← Salir</Button>
-          <Button
-            onClick={toggleMusic}
-            variant="outline"
-            size="icon"
-            className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-          >
-            {musicEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          </Button>
+         <div className="flex justify-start mb-4">
+            <Button onClick={onGameExit} variant="ghost" className="text-white hover:bg-white/20">
+                ← Salir
+            </Button>
         </div>
-        
+
         <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg animate-bounce">🧙‍♂️ FingerSum ✨</h1>
-          <p className="text-xl text-white/90 font-medium">¡Aprende a sumar hasta 20 con deditos mágicos!</p>
+          <h1 className="text-5xl sm:text-6xl font-bold text-white mb-4 drop-shadow-lg animate-slow-bounce">🧙‍♂️ Suma Mágica ✨</h1>
+          <p className="text-lg sm:text-xl text-white/90 font-medium">¡Aprende a sumar hasta 20 con deditos mágicos!</p>
         </div>
 
         <div className="grid gap-6 max-w-2xl mx-auto">
-          <div className="grid gap-4">
-            <h2 className="text-3xl font-bold text-white text-center mb-4">Elige tu nivel</h2>
+           <div className="grid gap-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-4">Elige tu Aventura</h2>
 
             {Object.entries(difficultyConfig).map(([key, config]) => {
               const isLocked = isLevelLocked(key as Difficulty)
@@ -207,7 +196,7 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
               return (
                 <Card
                   key={key}
-                  className={`p-6 backdrop-blur-sm shadow-xl transition-all duration-300 ${
+                  className={`p-4 sm:p-6 backdrop-blur-sm shadow-xl transition-all duration-300 ${
                     isLocked
                       ? "bg-gray-400/50 cursor-not-allowed"
                       : "bg-white/95 hover:shadow-2xl hover:scale-105 cursor-pointer"
@@ -215,22 +204,22 @@ export default function FingerSumGame({ lessonId, onGameExit }: FingerSumGamePro
                   onClick={() => !isLocked && startGame(key as Difficulty)}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-4 h-4 rounded-full ${isLocked ? "bg-gray-400" : config.color}`}></div>
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${isLocked ? "bg-gray-400" : config.color}`}></div>
                       <div>
-                        <h3 className={`text-xl font-bold ${isLocked ? "text-gray-500" : "text-gray-800"}`}>
+                        <h3 className={`text-lg sm:text-xl font-bold ${isLocked ? "text-gray-500" : "text-gray-800"}`}>
                           {config.name}
                           {isLocked && <Lock className="inline ml-2 h-4 w-4" />}
                         </h3>
-                        <p className={`${isLocked ? "text-gray-400" : "text-gray-600"}`}>
+                        <p className={`text-sm ${isLocked ? "text-gray-400" : "text-gray-600"}`}>
                           {config.questions} ejercicios • Sumas hasta {config.maxNumber}
                         </p>
                         {isLocked && (
-                          <p className="text-sm text-gray-500 mt-1">Completa el nivel anterior para desbloquear</p>
+                          <p className="text-xs sm:text-sm text-gray-500 mt-1">Completa el nivel anterior</p>
                         )}
                       </div>
                     </div>
-                    <div className={`text-3xl ${isLocked ? "grayscale" : ""}`}>
+                    <div className={`text-2xl sm:text-3xl ${isLocked ? "grayscale" : ""}`}>
                       {key === "easy" && "🌟"}
                       {key === "intermediate" && "⭐"}
                       {key === "advanced" && "🏆"}

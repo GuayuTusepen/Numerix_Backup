@@ -34,6 +34,35 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
   const [showFeedback, setShowFeedback] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const audio = new Audio('/sounds/contar_sound.mp3');
+      audio.loop = true;
+      audio.volume = 0.3;
+      audioRef.current = audio;
+    }
+
+    return () => {
+      audioRef.current?.pause();
+    }
+  }, []);
+
+  const playMusic = useCallback(() => {
+    if (audioRef.current && !isMuted) {
+      audioRef.current.play().catch(e => console.error("Error playing music:", e));
+    }
+  }, [isMuted]);
+
+  const pauseMusic = useCallback(() => {
+    audioRef.current?.pause();
+  }, []);
+  
+  useEffect(() => {
+    playMusic();
+  }, [playMusic]);
 
   // Generate questions
   useEffect(() => {
@@ -81,14 +110,9 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     setQuestions(generateQuestions())
   }, [config])
 
-  const playSound = (type: "correct" | "incorrect" | "click") => {
-    console.log(`Playing ${type} sound`)
-  }
-
   const handleAnswerSelect = (answer: number) => {
     if (showFeedback) return
 
-    playSound("click")
     setSelectedAnswer(answer)
     const correct = answer === questions[currentQuestion].answer
     setIsCorrect(correct)
@@ -98,11 +122,8 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     if (correct) {
       finalScore = score + 1;
       setScore(finalScore)
-      playSound("correct")
       setShowCelebration(true)
       setTimeout(() => setShowCelebration(false), 2000)
-    } else {
-      playSound("incorrect")
     }
 
     setTimeout(() => {
@@ -130,7 +151,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 p-4">
       {showCelebration && (
         <div className="fixed inset-0 bg-yellow-400/20 flex items-center justify-center z-50 pointer-events-none">
-          <div className="text-center animate-bounce">
+          <div className="text-center animate-slow-bounce">
             <div className="text-9xl mb-4">🎉</div>
             <div className="text-4xl font-bold text-white drop-shadow-lg">¡Excelente!</div>
           </div>
@@ -169,12 +190,12 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
           />
         </div>
 
-        <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">¿Cuántos dedos hay en total? 🤔</h2>
+        <Card className="p-4 sm:p-8 bg-white/95 backdrop-blur-sm shadow-2xl">
+          <div className="text-center mb-4 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">¿Cuántos dedos hay en total? 🤔</h2>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-4 sm:mb-8">
             <FingerDisplay
               leftFingers={question.left}
               rightFingers={question.right}
@@ -183,13 +204,13 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-md mx-auto mb-6">
             {question.options.map((option) => (
               <Button
                 key={option}
                 onClick={() => handleAnswerSelect(option)}
                 disabled={showFeedback}
-                className={`h-16 text-2xl font-bold rounded-xl transition-all duration-300 ${
+                className={`h-14 sm:h-16 text-xl sm:text-2xl font-bold rounded-xl transition-all duration-300 ${
                   showFeedback
                     ? option === question.answer
                       ? "bg-green-500 hover:bg-green-500 text-white scale-110"
@@ -207,7 +228,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
           </div>
 
           {showFeedback && (
-            <div className="text-center">
+            <div className="text-center min-h-[100px]">
               {isCorrect ? (
                 <div className="text-green-600">
                   <div className="text-4xl mb-2">🎉</div>
@@ -231,7 +252,7 @@ export default function GameLevel({ difficulty, config, onComplete, onExit }: Ga
         </Card>
 
         <div className="text-center mt-6">
-          <div className="text-4xl animate-bounce">🧙‍♂️</div>
+          <div className="text-4xl animate-slow-pulse">🧙‍♂️</div>
           <div className="text-white font-medium mt-2">
             {showFeedback ? (isCorrect ? "¡Eres increíble! ✨" : "¡Sigue intentando! 💪") : "¡Tú puedes hacerlo! 🌟"}
           </div>

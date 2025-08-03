@@ -26,7 +26,7 @@ export default function Results({
   currentDifficulty,
   hasNextLevel = false,
 }: ResultsProps) {
-  const percentage = Math.round((score / total) * 100)
+  const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
   const isExcellent = percentage >= 90
   const isGood = percentage >= 70
   const needsImprovement = percentage < 70
@@ -62,21 +62,21 @@ export default function Results({
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-400 to-purple-400 p-4">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Resultados</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Resultados</h1>
           <div className="text-white/80 capitalize">{currentDifficulty}</div>
         </div>
 
-        <Card className="p-8 bg-white/95 backdrop-blur-sm shadow-2xl text-center">
+        <Card className="p-6 sm:p-8 bg-white/95 backdrop-blur-sm shadow-2xl text-center">
           <div className="mb-6">
-            <div className="text-8xl mb-4 animate-slow-bounce">{result.emoji}</div>
-            <div className="text-6xl animate-slow-pulse">✨</div>
+            <div className="text-7xl sm:text-8xl mb-4 animate-slow-bounce">{result.emoji}</div>
+            <div className="text-5xl sm:text-6xl animate-slow-pulse">✨</div>
           </div>
 
           <div className="mb-6">
-            <div className="text-6xl font-bold text-gray-800 mb-2">
+            <div className="text-5xl sm:text-6xl font-bold text-gray-800 mb-2">
               {score}/{total}
             </div>
-            <div className="text-2xl font-semibold text-gray-600 mb-4">{percentage}% correcto</div>
+            <div className="text-xl sm:text-2xl font-semibold text-gray-600 mb-4">{percentage}% correcto</div>
 
             <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
               <div
@@ -89,8 +89,8 @@ export default function Results({
           </div>
 
           <div className="mb-8">
-            <h2 className={`text-3xl font-bold mb-2 ${result.color}`}>{result.title}</h2>
-            <p className="text-xl text-gray-600">{result.message}</p>
+            <h2 className={`text-2xl sm:text-3xl font-bold mb-2 ${result.color}`}>{result.title}</h2>
+            <p className="text-lg sm:text-xl text-gray-600">{result.message}</p>
 
             {canAdvance && hasNextLevel && (
               <div className="mt-4 p-4 bg-green-100 rounded-lg">
@@ -103,7 +103,7 @@ export default function Results({
             {[1, 2, 3].map((star) => (
               <div
                 key={star}
-                className={`text-4xl transition-all duration-500 ${
+                className={`text-3xl sm:text-4xl transition-all duration-500 ${
                   star <= Math.ceil((percentage / 100) * 3) ? "text-yellow-400 animate-slow-pulse" : "text-gray-300"
                 }`}
                 style={{ animationDelay: `${star * 0.2}s` }}
@@ -144,7 +144,7 @@ export default function Results({
         </Card>
 
         <div className="text-center mt-8">
-          <div className="text-6xl animate-slow-bounce">🧙‍♂️</div>
+          <div className="text-6xl animate-slow-pulse">🧙‍♂️</div>
           <div className="text-white font-bold text-xl mt-2">
             {isExcellent && "¡Eres increíble! 🎉"}
             {isGood && !isExcellent && "¡Buen trabajo! 👏"}
