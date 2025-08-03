@@ -1,10 +1,10 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Play, Lock } from "lucide-react"
+import { Play, Lock, Volume2, VolumeX } from "lucide-react"
 import Tutorial from "./Tutorial"
 import GameLevel from "./GameLevel"
 import Results from "./Results"
@@ -25,12 +25,14 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
   const [difficulty, setDifficulty] = useState<Difficulty>("easy")
   const [score, setScore] = useState(0)
   const [totalQuestions, setTotalQuestions] = useState(0)
+  const [soundEnabled, setSoundEnabled] = useState(true);
   
   const { activeProfile } = useProfile();
   const { updateLessonProgress } = useProgress();
   
   const tutorialStorageKey = activeProfile ? `fingersub_tutorial_completed_${activeProfile.id}` : null;
   const progressStorageKey = activeProfile ? `fingersub_progress_${activeProfile.id}` : null;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [unlockedLevels, setUnlockedLevels] = useState<Difficulty[]>(["easy"]);
   const [tutorialCompleted, setTutorialCompleted] = useState(false);
@@ -40,6 +42,40 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
     intermediate: { name: "Intermedio", questions: 7, maxNumber: 15, color: "bg-yellow-500" },
     advanced: { name: "Avanzado", questions: 10, maxNumber: 20, color: "bg-red-500" },
   }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      audioRef.current = new Audio('/sounds/sound_operations.mp3');
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.5;
+    }
+     return () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const shouldPlay = (gameState === 'playing' || gameState === 'tutorial') && soundEnabled;
+
+    const playPromise = shouldPlay ? audio.play() : Promise.resolve();
+    
+    playPromise.catch(e => console.error("Error al reproducir música:", e));
+
+    return () => {
+      playPromise.then(() => {
+        if (audio.paused === false) {
+          audio.pause();
+        }
+      }).catch(()=>{});
+    };
+  }, [gameState, soundEnabled]);
+
 
   useEffect(() => {
     if (progressStorageKey) {
@@ -171,9 +207,17 @@ export default function FingerSubtractionGame({ lessonId, onGameExit }: FingerSu
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-400 via-orange-400 to-yellow-400 p-4">
       <div className="max-w-4xl mx-auto">
-         <div className="flex justify-start mb-4">
+         <div className="flex justify-between items-center mb-4">
             <Button onClick={onGameExit} variant="ghost" className="text-white hover:bg-white/20">
                 ← Salir
+            </Button>
+            <Button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                variant="outline"
+                size="icon"
+                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              >
+                {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
             </Button>
         </div>
 
