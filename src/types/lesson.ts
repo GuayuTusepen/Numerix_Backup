@@ -8,7 +8,7 @@ export interface Lesson {
   iconSrc: string; // Path to image icon in /public
   backgroundSrc: string; // Path to background image for the lesson card
   iconHint: string; // For data-ai-hint
-  activityType: 'game' | 'classify-and-count' | 'external-link' | 'placeholder';
+  activityType: 'game' | 'classify-and-count' | 'external-link' | 'placeholder' | 'finger-sum-game';
   difficulty: 'easy' | 'medium' | 'hard';
   externalUrl?: string; // Add this for external links
 }
@@ -70,7 +70,16 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
         activityType: 'external-link',
         externalUrl: 'https://pbskids.org/curiousgeorge/busyday/span_bugs/'
       },
-      { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/suma20_fondo.jpg', backgroundSrc: '/icons/fondo_suma20.jpg', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
+      { 
+        id: 'addition-up-to-20', 
+        title: 'Sumas hasta 20', 
+        description: 'Suma con los dedos hasta 20.', 
+        iconSrc: '/icons/suma20_fondo.jpg', 
+        backgroundSrc: '/icons/fondo_suma20.jpg', 
+        iconHint: 'calculator math', 
+        difficulty: 'medium', 
+        activityType: 'finger-sum-game' 
+      },
     ],
   },
   {

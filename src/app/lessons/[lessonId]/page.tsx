@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
@@ -12,6 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import CountingGame from '@/components/lessons/games/CountingGame';
+import FingerSumGame from '@/components/lessons/games/finger-sum-game/FingerSumGame';
 import { gameData } from '@/data/countingGameData';
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -63,10 +65,9 @@ function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComple
       if (remaining <= 0) {
         setTimeLeft(0);
         clearInterval(interval);
-        // Automatically complete with 2 stars if timer runs out
         if (getLocalStorageItem<number | null>(storageKey, null) !== null) {
           onComplete(2);
-          setLocalStorageItem(storageKey, null); // Clear timer
+          setLocalStorageItem(storageKey, null); 
         }
       } else {
         setTimeLeft(remaining);
@@ -80,8 +81,9 @@ function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComple
   const seconds = timeLeft % 60;
 
   const handleStartActivity = () => {
+    if(!lesson.externalUrl) return;
     window.open(lesson.externalUrl, '_blank', 'noopener,noreferrer');
-    const newEndTime = Date.now() + 180 * 1000; // 3 minutes from now
+    const newEndTime = Date.now() + 180 * 1000;
     if (storageKey) {
       setLocalStorageItem(storageKey, newEndTime);
       setEndTime(newEndTime);
@@ -90,10 +92,10 @@ function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComple
 
   const handleManualComplete = () => {
     if (storageKey) {
-      setLocalStorageItem(storageKey, null); // Clear timer
+      setLocalStorageItem(storageKey, null);
     }
     setEndTime(null);
-    onComplete(3); // Manually completed, award 3 stars
+    onComplete(3);
   };
 
   return (
@@ -140,7 +142,6 @@ export default function LessonPage() {
   const lesson = LESSON_CATEGORIES.flatMap(category => category.lessons).find(l => l.id === lessonId);
 
   useEffect(() => {
-    // This effect handles the redirection for specific activity types.
     if (lesson && lesson.activityType === 'classify-and-count') {
       router.replace(`/lessons/${lesson.id}/play`);
     }
@@ -197,7 +198,6 @@ export default function LessonPage() {
         description: `Ganaste ${stars} estrella(s) por "${lesson.title}". ¡Buen trabajo!`,
       });
 
-      // Special logic: if 'addition-up-to-20' is completed with 3 stars, also complete 'simple-addition'
       if (lesson.id === 'addition-up-to-20' && stars === 3) {
         updateLessonProgress('simple-addition', { completed: true, stars: 3, lastAttempted: new Date().toISOString() });
         toast({
@@ -229,6 +229,8 @@ export default function LessonPage() {
     switch (lesson.activityType) {
       case 'game':
         return <CountingGame onGameExit={handleGameExit} />;
+      case 'finger-sum-game':
+        return <FingerSumGame lessonId={lesson.id} onGameExit={handleGameExit} />;
       case 'classify-and-count':
         return <p className="text-center p-8">Cargando juego...</p>;
       case 'external-link':
@@ -239,18 +241,17 @@ export default function LessonPage() {
     }
   };
 
+  const isFullScreenGame = lesson.activityType === 'game' || lesson.activityType === 'finger-sum-game';
 
   return (
     <div className="container mx-auto py-8 px-4">
-       {/* Hide back button for fullscreen games */}
-      {lesson.activityType !== 'game' && (
+      {!isFullScreenGame && (
          <Button variant="ghost" onClick={() => router.back()} className="mb-6 text-accent hover:text-accent/90">
            <ArrowLeft className="mr-2 h-5 w-5" /> Volver
          </Button>
        )}
 
-      {/* Conditional rendering to avoid showing the card for fullscreen games */}
-      {lesson.activityType === 'game' ? (
+      {isFullScreenGame ? (
         renderLessonContent()
       ) : (
         <Card className="shadow-xl rounded-xl overflow-hidden">
