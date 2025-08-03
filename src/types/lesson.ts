@@ -58,8 +58,8 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/sumas_icon.jpg',
     iconHint: 'plus circle',
     lessons: [
-      { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/simple-addition-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
-      { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/addition-20-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/sumasimple_logo.jpg', backgroundSrc: '/icons/fondosumasimple.jpg', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
+      { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/suma20_fondo.jpg', backgroundSrc: '/icons/fondo_suma20.jpg', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
   {
