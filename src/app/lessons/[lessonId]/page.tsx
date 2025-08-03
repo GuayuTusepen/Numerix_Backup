@@ -15,6 +15,7 @@ import CountingGame from '@/components/lessons/games/CountingGame';
 import { gameData } from '@/data/countingGameData';
 import { getLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
+import BugAdditionGame from '@/components/lessons/games/BugAdditionGame'; // Import the new game
 
 // Placeholder for other lesson content components
 function LessonContentPlaceholder({ lesson, onComplete }: { lesson: Lesson, onComplete: () => void }) {
@@ -63,16 +64,15 @@ export default function LessonPage() {
     }
   }, [lesson, router]);
   
-  const handleGameExit = () => {
-    // This function will be called by game components to signal returning to the lesson/dashboard
-    // For "count-to-10", it also saves progress.
-    if (lessonId === 'count-to-10') {
+  const handleGameExit = (progress?: { completed: boolean, stars: 0 | 1 | 2 | 3 }) => {
+     if (lessonId === 'count-to-10') {
       if (!activeProfile) {
           toast({
               variant: "destructive",
               title: "Error de perfil",
               description: "No se encontró un perfil activo para guardar el progreso.",
           });
+          router.push('/dashboard');
           return;
       }
       const gameStorageKey = `countingGameProgress_${activeProfile.id}`;
@@ -103,8 +103,15 @@ export default function LessonPage() {
         title: "¡Progreso Guardado!",
         description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
       });
+    } else if (lessonId === 'simple-addition' && progress) {
+        updateLessonProgress(lessonId, { ...progress, lastAttempted: new Date().toISOString() });
+        toast({
+            title: "¡Lección Finalizada!",
+            description: `Ganaste ${progress.stars} estrella(s) en "Sumas Simples con Bichos".`
+        });
     }
-     router.push('/dashboard');
+
+    router.push('/dashboard');
   };
 
   const handlePlaceholderComplete = () => {
@@ -138,8 +145,9 @@ export default function LessonPage() {
       case 'game':
         return <CountingGame onGameExit={handleGameExit} />;
       case 'classify-and-count':
-        // Render a loading state or null while redirecting
         return <p className="text-center p-8">Cargando juego...</p>; 
+      case 'bug-addition':
+        return <BugAdditionGame onGameExit={handleGameExit} />;
       case 'placeholder':
       default:
         return <LessonContentPlaceholder lesson={lesson} onComplete={handlePlaceholderComplete} />;
@@ -149,35 +157,43 @@ export default function LessonPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-6 text-accent hover:text-accent/90">
-        <ArrowLeft className="mr-2 h-5 w-5" /> Volver
-      </Button>
+       {/* Hide back button for fullscreen games */}
+      {lesson.activityType !== 'game' && lesson.activityType !== 'bug-addition' && (
+         <Button variant="ghost" onClick={() => router.back()} className="mb-6 text-accent hover:text-accent/90">
+           <ArrowLeft className="mr-2 h-5 w-5" /> Volver
+         </Button>
+       )}
 
-      <Card className="shadow-xl rounded-xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-primary via-yellow-400 to-accent p-6">
-          <CardTitle className="text-4xl font-bold text-primary-foreground text-center">{lesson.title}</CardTitle>
-          <CardDescription className="text-lg text-primary-foreground/90 text-center mt-1">{lesson.description}</CardDescription>
-        </CardHeader>
-          {currentProgress?.completed && lesson.activityType !== 'game' && lesson.activityType !== 'classify-and-count' && (
-             <div className="m-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md text-green-700">
-                <div className="flex items-center">
-                  <CheckCircle className="h-6 w-6 mr-3" />
-                  <div>
-                    <p className="font-semibold">¡Has completado esta lección!</p>
-                    <div className="flex mt-1">
-                      {Array(currentProgress.stars).fill(0).map((_, i) => (
-                        <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                      ))}
-                      {Array(3 - currentProgress.stars).fill(0).map((_, i) => (
-                        <Star key={`empty-${i}`} className="h-5 w-5 text-yellow-400/50" />
-                      ))}
-                    </div>
+      {/* Conditional rendering to avoid showing the card for fullscreen games */}
+      {lesson.activityType === 'game' || lesson.activityType === 'bug-addition' ? (
+        renderLessonContent()
+      ) : (
+        <Card className="shadow-xl rounded-xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-primary via-yellow-400 to-accent p-6">
+            <CardTitle className="text-4xl font-bold text-primary-foreground text-center">{lesson.title}</CardTitle>
+            <CardDescription className="text-lg text-primary-foreground/90 text-center mt-1">{lesson.description}</CardDescription>
+          </CardHeader>
+          {currentProgress?.completed && (
+            <div className="m-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-md text-green-700">
+              <div className="flex items-center">
+                <CheckCircle className="h-6 w-6 mr-3" />
+                <div>
+                  <p className="font-semibold">¡Has completado esta lección!</p>
+                  <div className="flex mt-1">
+                    {Array(currentProgress.stars).fill(0).map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                    ))}
+                    {Array(3 - currentProgress.stars).fill(0).map((_, i) => (
+                      <Star key={`empty-${i}`} className="h-5 w-5 text-yellow-400/50" />
+                    ))}
                   </div>
                 </div>
+              </div>
             </div>
           )}
           {renderLessonContent()}
-      </Card>
+        </Card>
+      )}
     </div>
   );
 }

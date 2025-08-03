@@ -8,7 +8,7 @@ export interface Lesson {
   iconSrc: string; // Path to image icon in /public
   backgroundSrc: string; // Path to background image for the lesson card
   iconHint: string; // For data-ai-hint
-  activityType: 'game' | 'classify-and-count' | 'placeholder';
+  activityType: 'game' | 'classify-and-count' | 'bug-addition' | 'placeholder';
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
@@ -58,7 +58,16 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/sumas_icon.jpg',
     iconHint: 'plus circle',
     lessons: [
-      { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/sumasimple_logo.jpg', backgroundSrc: '/icons/fondosumasimple.jpg', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
+      { 
+        id: 'simple-addition', 
+        title: 'Sumas Simples con Bichos', 
+        description: 'Suma arrastrando bichos a una hoja.', 
+        iconSrc: '/icons/sumasimple_logo.jpg', 
+        backgroundSrc: '/icons/fondosumasimple.jpg', 
+        iconHint: 'ladybug plus', 
+        difficulty: 'easy', 
+        activityType: 'bug-addition' 
+      },
       { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/suma20_fondo.jpg', backgroundSrc: '/icons/fondo_suma20.jpg', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
