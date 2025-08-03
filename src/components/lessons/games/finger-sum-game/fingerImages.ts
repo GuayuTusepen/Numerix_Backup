@@ -1,6 +1,7 @@
 // src/components/lessons/games/finger-sum-game/fingerImages.ts
 
 export const fingerImages: { [key: number]: string } = {
+  0: '/icons/img_0dedos.jpg',
   1: '/icons/img_1dedo.jpg',
   2: '/icons/img_2dedos.jpg',
   3: '/icons/img_3dedos.jpg',
