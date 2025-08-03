@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { LESSON_CATEGORIES } from '@/types/lesson';
 import type { Lesson } from '@/types/lesson';
 import { Button } from '@/components/ui/button';
 import { useProgress } from '@/contexts/ProgressContext';
-import { ArrowLeft, CheckCircle, Star, Zap } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Star, Zap, ExternalLink, Timer } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -15,7 +15,6 @@ import CountingGame from '@/components/lessons/games/CountingGame';
 import { gameData } from '@/data/countingGameData';
 import { getLocalStorageItem } from '@/lib/localStorage';
 import { useProfile } from '@/contexts/ProfileContext';
-import BugAdditionGame from '@/components/lessons/games/BugAdditionGame'; // Import the new game
 
 // Placeholder for other lesson content components
 function LessonContentPlaceholder({ lesson, onComplete }: { lesson: Lesson, onComplete: () => void }) {
@@ -45,6 +44,56 @@ function LessonContentPlaceholder({ lesson, onComplete }: { lesson: Lesson, onCo
   );
 }
 
+function ExternalLinkActivity({ lesson, onComplete }: { lesson: Lesson, onComplete: (stars: 1 | 2 | 3) => void }) {
+  const [timer, setTimer] = useState(180); // 3 minutes in seconds
+  const [activityStarted, setActivityStarted] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activityStarted && timer > 0) {
+      interval = setInterval(() => {
+        setTimer(t => t - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      onComplete(2); // Complete with 2 stars by default
+    }
+    return () => clearInterval(interval);
+  }, [activityStarted, timer, onComplete]);
+  
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
+
+  const handleStartActivity = () => {
+    window.open(lesson.externalUrl, '_blank', 'noopener,noreferrer');
+    setActivityStarted(true);
+  }
+
+  return (
+    <CardContent className="p-6 md:p-8">
+      <div className="p-6 bg-muted/30 rounded-lg min-h-[200px] flex flex-col items-center justify-center text-center space-y-4">
+        <ExternalLink size={48} className="text-primary" />
+        <h3 className="text-2xl font-semibold">¡Actividad Externa!</h3>
+        <p className="text-muted-foreground max-w-md">
+          Esta lección te llevará a un juego divertido en otra página web. ¡Juega allí y regresa cuando hayas terminado!
+        </p>
+        {!activityStarted ? (
+          <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleStartActivity}>
+             ¡Ir a la Actividad!
+          </Button>
+        ) : (
+          <div className="text-center p-4 border rounded-lg bg-background">
+              <p className="font-semibold text-lg text-primary flex items-center justify-center">
+                <Timer className="mr-2 animate-spin" />
+                Tiempo restante: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+              </p>
+             <p className="text-sm text-muted-foreground mt-2">¡La lección se completará cuando el tiempo termine!</p>
+          </div>
+        )}
+      </div>
+    </CardContent>
+  )
+}
+
 
 export default function LessonPage() {
   const router = useRouter();
@@ -64,7 +113,7 @@ export default function LessonPage() {
     }
   }, [lesson, router]);
   
-  const handleGameExit = (progress?: { completed: boolean, stars: 0 | 1 | 2 | 3 }) => {
+  const handleGameExit = () => {
      if (lessonId === 'count-to-10') {
       if (!activeProfile) {
           toast({
@@ -103,23 +152,16 @@ export default function LessonPage() {
         title: "¡Progreso Guardado!",
         description: `Ganaste ${overallStars} estrella(s) en total para "${lesson?.title}". ¡Sigue así!`,
       });
-    } else if (lessonId === 'simple-addition' && progress) {
-        updateLessonProgress(lessonId, { ...progress, lastAttempted: new Date().toISOString() });
-        toast({
-            title: "¡Lección Finalizada!",
-            description: `Ganaste ${progress.stars} estrella(s) en "Sumas Simples con Bichos".`
-        });
     }
-
     router.push('/dashboard');
   };
 
-  const handlePlaceholderComplete = () => {
-      const stars = (Math.floor(Math.random() * 3) + 1) as (1 | 2 | 3);
+  const handleLessonComplete = (stars: 0 | 1 | 2 | 3) => {
+      if(!lesson) return;
       updateLessonProgress(lessonId, { completed: true, stars: stars, lastAttempted: new Date().toISOString() });
       toast({
         title: "¡Lección Completada!",
-        description: `Ganaste ${stars} estrella(s) por "${lesson?.title}". ¡Buen trabajo!`,
+        description: `Ganaste ${stars} estrella(s) por "${lesson.title}". ¡Buen trabajo!`,
       });
       router.push('/dashboard');
   }
@@ -145,12 +187,12 @@ export default function LessonPage() {
       case 'game':
         return <CountingGame onGameExit={handleGameExit} />;
       case 'classify-and-count':
-        return <p className="text-center p-8">Cargando juego...</p>; 
-      case 'bug-addition':
-        return <BugAdditionGame onGameExit={handleGameExit} />;
+        return <p className="text-center p-8">Cargando juego...</p>;
+      case 'external-link':
+        return <ExternalLinkActivity lesson={lesson} onComplete={handleLessonComplete} />;
       case 'placeholder':
       default:
-        return <LessonContentPlaceholder lesson={lesson} onComplete={handlePlaceholderComplete} />;
+        return <LessonContentPlaceholder lesson={lesson} onComplete={() => handleLessonComplete((Math.floor(Math.random() * 3) + 1) as 1 | 2 | 3)} />;
     }
   };
 
@@ -158,14 +200,14 @@ export default function LessonPage() {
   return (
     <div className="container mx-auto py-8 px-4">
        {/* Hide back button for fullscreen games */}
-      {lesson.activityType !== 'game' && lesson.activityType !== 'bug-addition' && (
+      {lesson.activityType !== 'game' && (
          <Button variant="ghost" onClick={() => router.back()} className="mb-6 text-accent hover:text-accent/90">
            <ArrowLeft className="mr-2 h-5 w-5" /> Volver
          </Button>
        )}
 
       {/* Conditional rendering to avoid showing the card for fullscreen games */}
-      {lesson.activityType === 'game' || lesson.activityType === 'bug-addition' ? (
+      {lesson.activityType === 'game' ? (
         renderLessonContent()
       ) : (
         <Card className="shadow-xl rounded-xl overflow-hidden">
