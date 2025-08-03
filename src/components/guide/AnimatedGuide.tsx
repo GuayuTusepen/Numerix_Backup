@@ -28,7 +28,7 @@ export function AnimatedGuide() {
           </div>
           <div className="bg-primary p-2 rounded-full shadow-lg animate-bounce">
             <Image 
-              src="/guide/friendly-owl.png"
+              src="/icons/pfp_guia.jpg"
               alt="Guía Amigable" 
               width={56} 
               height={56} 
@@ -41,7 +41,7 @@ export function AnimatedGuide() {
       <DialogContent className="sm:max-w-[480px] bg-card rounded-xl p-0">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle className="text-2xl text-center text-primary flex items-center justify-center gap-3">
-            <Image src="/guide/friendly-owl.png" alt="Guía" width={40} height={40} data-ai-hint="owl mascot"/>
+            <Image src="/icons/pfp_guia.jpg" alt="Guía" width={40} height={40} data-ai-hint="owl mascot"/>
             <span>Guía de Numerix</span>
           </DialogTitle>
            <p className="text-center text-muted-foreground pt-2">{welcomeMessage} ¡Déjame mostrarte cómo funciona todo!</p>
