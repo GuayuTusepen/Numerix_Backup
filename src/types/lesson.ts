@@ -114,9 +114,9 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
         id: 'basic-shapes', 
         title: 'Formas Básicas', 
         description: 'Aprende círculos, cuadrados y triángulos en este juego externo.', 
-        iconSrc: '/icons/basic-shapes-icon.png', 
-        backgroundSrc: 'https://placehold.co/600x400.png', 
-        iconHint: 'square circle', 
+        iconSrc: '/icons/logo_figs.jpg', 
+        backgroundSrc: '/icons/minigame_forms_fondo.jpg', 
+        iconHint: 'geometric shapes', 
         difficulty: 'easy', 
         activityType: 'external-link',
         externalUrl: 'https://arbolabc.com/juegos-de-figuras-geometricas/aprendamos-las-formas'
