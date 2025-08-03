@@ -31,7 +31,7 @@ interface CountAnswer {
 }
 
 // Función para generar una configuración de nivel aleatoria
-const generateRandomLevelSetup = (levelTemplate: GameLevel): { objects: GameObject[], categories: GameCategory[] } => {
+const generateRandomLevelSetup = (levelTemplate: GameLevel): GameLevel => {
     const newObjects: GameObject[] = [];
     
     // Create a deep copy of categories to avoid modifying the original template
@@ -53,12 +53,12 @@ const generateRandomLevelSetup = (levelTemplate: GameLevel): { objects: GameObje
         options.add(correctCount);
         while(options.size < 3) {
             const randomOption = Math.max(1, correctCount + Math.floor(Math.random() * 3) - 1); // e.g., correct +/- 1
-            options.add(randomOption);
+            if(randomOption !== 0) options.add(randomOption); // Ensure we don't add 0 unless it's the correct answer
         }
         category.countOptions = Array.from(options).sort((a,b) => a - b);
     });
 
-    return { objects: newObjects, categories: newCategories };
+    return { ...levelTemplate, objects: newObjects, categories: newCategories };
 };
 
 
@@ -569,7 +569,7 @@ const ClassifyAndCountGame: React.FC<Props> = ({ gameLevel: levelTemplate, onLev
                     </Card>
                 </div>
             )}
-          <div className={`grid grid-cols-1 ${currentLevel.categories.length > 2 ? 'md:grid-cols-2' : ''} gap-4`}>
+          <div className="grid grid-cols-2 gap-4">
             {currentLevel.categories.map((category, index) => {
               const objectsInCategory = getObjectsInCategory(category.id);
               const isCurrentCountingCategory = gamePhase === 'counting' && countingCategoryIndex === index;
