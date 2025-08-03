@@ -33,16 +33,29 @@ interface CountAnswer {
 // Función para generar una configuración de nivel aleatoria
 const generateRandomLevelSetup = (levelTemplate: GameLevel): { objects: GameObject[], categories: GameCategory[] } => {
     const newObjects: GameObject[] = [];
-    const newCategories: GameCategory[] = [...levelTemplate.categories];
+    
+    // Create a deep copy of categories to avoid modifying the original template
+    const newCategories: GameCategory[] = JSON.parse(JSON.stringify(levelTemplate.categories));
 
-    levelTemplate.categories.forEach(category => {
+    newCategories.forEach(category => {
         const categoryObjects = levelTemplate.objects.filter(obj => obj.type === category.id);
         // Random count between 2 and max available, but at least 2
-        const count = Math.floor(Math.random() * (categoryObjects.length - 2 + 1)) + 2;
+        const count = Math.max(2, Math.floor(Math.random() * (categoryObjects.length - 1)) + 2);
         
         // Shuffle and pick objects
         const shuffled = [...categoryObjects].sort(() => 0.5 - Math.random());
-        newObjects.push(...shuffled.slice(0, count));
+        const selectedObjects = shuffled.slice(0, count);
+        newObjects.push(...selectedObjects);
+        
+        // Dynamically generate count options
+        const correctCount = selectedObjects.length;
+        const options = new Set<number>();
+        options.add(correctCount);
+        while(options.size < 3) {
+            const randomOption = Math.max(1, correctCount + Math.floor(Math.random() * 3) - 1); // e.g., correct +/- 1
+            options.add(randomOption);
+        }
+        category.countOptions = Array.from(options).sort((a,b) => a - b);
     });
 
     return { objects: newObjects, categories: newCategories };

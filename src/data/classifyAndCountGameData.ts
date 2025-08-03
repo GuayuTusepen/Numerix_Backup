@@ -10,7 +10,7 @@ export interface GameCategory {
   id: string;
   name: string;
   color: string;
-  countOptions: number[]; // e.g. [3, 4, 5], where 4 is the correct answer
+  countOptions: number[]; 
 }
 
 export interface GameLevel {
@@ -19,7 +19,7 @@ export interface GameLevel {
   categories: GameCategory[];
 }
 
-// Esta es una plantilla. El juego generará un subconjunto aleatorio de estos objetos cada vez.
+// Esta es una plantilla. El juego generará un subconjunto aleatorio de estos objetos y las opciones de conteo cada vez.
 export const classifyAndCountGameData: GameLevel[] = [
   // NIVEL 1: Animales y Juguetes (4 animales, 4 juguetes)
   {
@@ -37,8 +37,8 @@ export const classifyAndCountGameData: GameLevel[] = [
       { id: "teddy-1", type: "juguete", name: "Osito", asset: "🧸" },
     ],
     categories: [
-      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [2, 3, 4, 5] },
-      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [2, 3, 4, 5] },
+      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [] },
+      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [] },
     ],
   },
 
@@ -60,9 +60,9 @@ export const classifyAndCountGameData: GameLevel[] = [
       { id: "grapes", type: "fruta", name: "Uvas", asset: "🍇" },
     ],
     categories: [
-      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [3, 4, 5] },
-      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [4, 5, 6] },
-      { id: "fruta", name: "Frutas", color: "bg-red-200 border-red-400", countOptions: [2, 3, 4] },
+      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [] },
+      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [] },
+      { id: "fruta", name: "Frutas", color: "bg-red-200 border-red-400", countOptions: [] },
     ],
   },
 
@@ -88,10 +88,10 @@ export const classifyAndCountGameData: GameLevel[] = [
       { id: "bicycle", type: "vehiculo", name: "Bicicleta", asset: "🚲" },
     ],
     categories: [
-      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [3, 4, 5] },
-      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [2, 3, 4] },
-      { id: "fruta", name: "Frutas", color: "bg-red-200 border-red-400", countOptions: [4, 5, 6] },
-      { id: "vehiculo", name: "Vehículos", color: "bg-purple-200 border-purple-400", countOptions: [3, 4, 2] },
+      { id: "animal", name: "Animales", color: "bg-green-200 border-green-400", countOptions: [] },
+      { id: "juguete", name: "Juguetes", color: "bg-blue-200 border-blue-400", countOptions: [] },
+      { id: "fruta", name: "Frutas", color: "bg-red-200 border-red-400", countOptions: [] },
+      { id: "vehiculo", name: "Vehículos", color: "bg-purple-200 border-purple-400", countOptions: [] },
     ],
   },
 ]
