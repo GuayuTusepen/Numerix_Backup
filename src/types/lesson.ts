@@ -93,14 +93,14 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
         id: 'simple-subtraction', 
         title: 'Restas Simples', 
         description: 'Juega un divertido juego de restas en una página externa.', 
-        iconSrc: '/icons/simple-subtraction-icon.png', 
-        backgroundSrc: 'https://placehold.co/600x400.png', 
+        iconSrc: '/icons/resta_logo_complete.jpg', 
+        backgroundSrc: '/icons/fondo_restas_simple.jpg', 
         iconHint: 'minus one', 
         difficulty: 'easy', 
         activityType: 'external-link',
         externalUrl: 'https://es.educaplay.com/recursos-educativos/18889552-juego_de_restas_del_1_al_10.html'
       },
-      { id: 'subtraction-from-20', title: 'Restas desde 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/subtraction-20-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'subtraction-from-20', title: 'Restas hasta 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/logo_resta_simple.jpg', backgroundSrc: '/icons/fondo_restas_complejas.jpg', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
   {
