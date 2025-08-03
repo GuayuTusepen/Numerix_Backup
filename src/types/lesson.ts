@@ -25,7 +25,7 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     id: 'counting',
     title: 'Diversión Contando',
     description: 'Aprende a contar números y objetos.',
-    iconSrc: '/icons/counting-icon.png',
+    iconSrc: '/icons/count_to_0_icon.jpg',
     iconHint: 'abacus counting',
     lessons: [
       { id: 'count-to-10', title: 'Contar hasta 10', description: 'Practica contar del 1 al 10.', iconSrc: '/icons/count-to-10-icon.png', iconHint: 'ten fingers', difficulty: 'easy', activityType: 'game' },
@@ -36,7 +36,7 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     id: 'addition',
     title: 'Aventura de Sumas',
     description: 'Empieza a sumar números.',
-    iconSrc: '/icons/addition-icon.png',
+    iconSrc: '/icons/sumas_icon.jpg',
     iconHint: 'plus circle',
     lessons: [
       { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/simple-addition-icon.png', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
@@ -47,7 +47,7 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     id: 'subtraction',
     title: 'Estación de Restas',
     description: 'Aprende a quitar números.',
-    iconSrc: '/icons/subtraction-icon.png',
+    iconSrc: '/icons/estacipon_restas_icon.jpg',
     iconHint: 'minus circle',
     lessons: [
       { id: 'simple-subtraction', title: 'Restas Simples', description: 'Resta números de un solo dígito.', iconSrc: '/icons/simple-subtraction-icon.png', iconHint: 'minus one', difficulty: 'easy', activityType: 'placeholder' },
