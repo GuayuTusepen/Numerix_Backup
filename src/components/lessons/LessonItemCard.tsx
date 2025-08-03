@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Star, CheckCircle2, PlayCircle } from 'lucide-react';
 import type { LessonProgress } from '@/types/progress';
+import { cn } from '@/lib/utils';
 
 interface LessonItemCardProps {
   lesson: Lesson;
@@ -27,7 +28,7 @@ function DifficultyBadge({ difficulty }: { difficulty: Lesson['difficulty'] }) {
   }
 
   return (
-    <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${bgColor}`}>
+    <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${bgColor} shadow-sm`}>
       {difficultyText}
     </span>
   );
@@ -37,41 +38,54 @@ export function LessonItemCard({ lesson, progress }: LessonItemCardProps) {
   const stars = progress?.stars || 0;
 
   return (
-    <Card className="w-full shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg">
-      <CardHeader className="flex flex-row items-start bg-muted/50 p-4 space-x-4">
-        <Image
-          src={lesson.iconSrc}
-          alt={lesson.title}
-          width={60}
-          height={60}
-          className="rounded-md border bg-background"
-          data-ai-hint={lesson.iconHint}
+    <Link href={`/lessons/${lesson.id}`} passHref>
+      <Card className="w-full shadow-lg rounded-xl overflow-hidden transition-all duration-300 group hover:shadow-xl hover:scale-105 relative border-2 border-transparent hover:border-primary">
+        <Image 
+            src={lesson.backgroundSrc} 
+            alt={`Fondo para ${lesson.title}`}
+            layout="fill"
+            objectFit="cover"
+            className="absolute inset-0 z-0 transition-transform duration-300 group-hover:scale-110"
+            data-ai-hint={lesson.iconHint} // Reuse hint for background
         />
-        <div className="flex-1">
-          <CardTitle className="text-lg font-semibold text-foreground">{lesson.title}</CardTitle>
-          <DifficultyBadge difficulty={lesson.difficulty} />
-        </div>
-        {progress?.completed && <CheckCircle2 className="h-6 w-6 text-green-500" />}
-      </CardHeader>
-      <CardContent className="p-4">
-        <CardDescription className="text-sm text-muted-foreground mb-3 min-h-[40px]">{lesson.description}</CardDescription>
-        <div className="flex items-center justify-between">
-          <div className="flex">
-            {[1, 2, 3].map((s) => (
-              <Star
-                key={s}
-                className={`h-5 w-5 ${s <= stars ? 'text-primary fill-primary' : 'text-muted-foreground/50'}`}
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+        
+        <div className="relative z-20 flex flex-col justify-between h-full text-white min-h-[220px]">
+          <CardHeader className="flex flex-row items-center space-x-4 p-4">
+              <Image
+                src={lesson.iconSrc}
+                alt={lesson.title}
+                width={50}
+                height={50}
+                className="rounded-md border-2 border-white/50 bg-white/20 p-1"
+                data-ai-hint={lesson.iconHint}
               />
-            ))}
-          </div>
-          <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Link href={`/lessons/${lesson.id}`}>
-              <PlayCircle className="mr-2 h-4 w-4" />
-              {progress?.completed ? 'Repetir' : 'Empezar'}
-            </Link>
-          </Button>
+              <div className="flex-1">
+                <CardTitle className="text-lg font-bold drop-shadow-md">{lesson.title}</CardTitle>
+                <DifficultyBadge difficulty={lesson.difficulty} />
+              </div>
+              {progress?.completed && <CheckCircle2 className="h-6 w-6 text-green-300" />}
+          </CardHeader>
+
+          <CardContent className="p-4 pt-0">
+             <CardDescription className="text-sm text-white/90 mb-3 min-h-[40px] drop-shadow-sm">{lesson.description}</CardDescription>
+            <div className="flex items-center justify-between">
+              <div className="flex bg-black/30 p-1 rounded-full">
+                {[1, 2, 3].map((s) => (
+                  <Star
+                    key={s}
+                    className={`h-5 w-5 ${s <= stars ? 'text-yellow-400 fill-yellow-400' : 'text-white/40'}`}
+                  />
+                ))}
+              </div>
+              <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full shadow-md">
+                <PlayCircle className="mr-2 h-4 w-4" />
+                {progress?.completed ? 'Repetir' : 'Empezar'}
+              </Button>
+            </div>
+          </CardContent>
         </div>
-      </CardContent>
-    </Card>
+      </Card>
+    </Link>
   );
 }

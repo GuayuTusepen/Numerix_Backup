@@ -6,6 +6,7 @@ export interface Lesson {
   title: string;
   description: string;
   iconSrc: string; // Path to image icon in /public
+  backgroundSrc: string; // Path to background image for the lesson card
   iconHint: string; // For data-ai-hint
   activityType: 'game' | 'classify-and-count' | 'placeholder';
   difficulty: 'easy' | 'medium' | 'hard';
@@ -28,8 +29,26 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/count_to_0_icon.jpg',
     iconHint: 'abacus counting',
     lessons: [
-      { id: 'count-to-10', title: 'Contar hasta 10', description: 'Practica contar del 1 al 10.', iconSrc: '/icons/count-to-10-icon.png', iconHint: 'ten fingers', difficulty: 'easy', activityType: 'game' },
-      { id: 'object-counting', title: 'Contar Objetos', description: 'Clasifica y cuenta un conjunto de objetos divertidos.', iconSrc: '/icons/object-counting-icon.png', iconHint: 'shapes blocks', difficulty: 'easy', activityType: 'classify-and-count' },
+      { 
+        id: 'count-to-10', 
+        title: 'Contar hasta 10', 
+        description: 'Practica contar del 1 al 10 con frutas.', 
+        iconSrc: '/icons/contar10_icon.png',
+        backgroundSrc: '/icons/fondo_count_to_10.jpg',
+        iconHint: 'ten fingers', 
+        difficulty: 'easy', 
+        activityType: 'game' 
+      },
+      { 
+        id: 'object-counting', 
+        title: 'Contar Objetos', 
+        description: 'Clasifica y cuenta un conjunto de objetos divertidos.', 
+        iconSrc: '/icons/count_object_logo.jpg',
+        backgroundSrc: '/icons/fondo_contar_objetos.jpg',
+        iconHint: 'shapes blocks', 
+        difficulty: 'easy', 
+        activityType: 'classify-and-count' 
+      },
     ],
   },
   {
@@ -39,8 +58,8 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/sumas_icon.jpg',
     iconHint: 'plus circle',
     lessons: [
-      { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/simple-addition-icon.png', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
-      { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/addition-20-icon.png', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'simple-addition', title: 'Sumas Simples', description: 'Suma números de un solo dígito.', iconSrc: '/icons/simple-addition-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'plus one', difficulty: 'easy', activityType: 'placeholder' },
+      { id: 'addition-up-to-20', title: 'Sumas hasta 20', description: 'Practica sumas hasta 20.', iconSrc: '/icons/addition-20-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'calculator math', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
   {
@@ -50,8 +69,8 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/estacipon_restas_icon.jpg',
     iconHint: 'minus circle',
     lessons: [
-      { id: 'simple-subtraction', title: 'Restas Simples', description: 'Resta números de un solo dígito.', iconSrc: '/icons/simple-subtraction-icon.png', iconHint: 'minus one', difficulty: 'easy', activityType: 'placeholder' },
-      { id: 'subtraction-from-20', title: 'Restas desde 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/subtraction-20-icon.png', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'simple-subtraction', title: 'Restas Simples', description: 'Resta números de un solo dígito.', iconSrc: '/icons/simple-subtraction-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'minus one', difficulty: 'easy', activityType: 'placeholder' },
+      { id: 'subtraction-from-20', title: 'Restas desde 20', description: 'Practica quitar de números hasta 20.', iconSrc: '/icons/subtraction-20-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'file minus', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
   {
@@ -61,8 +80,8 @@ export const LESSON_CATEGORIES: LessonCategory[] = [
     iconSrc: '/icons/eart_forms_icon.jpg',
     iconHint: 'earth shapes',
     lessons: [
-      { id: 'basic-shapes', title: 'Formas Básicas', description: 'Aprende círculos, cuadrados y triángulos.', iconSrc: '/icons/basic-shapes-icon.png', iconHint: 'square circle', difficulty: 'easy', activityType: 'placeholder' },
-      { id: 'more-shapes', title: 'Más Formas', description: 'Explora rectángulos, estrellas y corazones.', iconSrc: '/icons/more-shapes-icon.png', iconHint: 'star heart', difficulty: 'medium', activityType: 'placeholder' },
+      { id: 'basic-shapes', title: 'Formas Básicas', description: 'Aprende círculos, cuadrados y triángulos.', iconSrc: '/icons/basic-shapes-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'square circle', difficulty: 'easy', activityType: 'placeholder' },
+      { id: 'more-shapes', title: 'Más Formas', description: 'Explora rectángulos, estrellas y corazones.', iconSrc: '/icons/more-shapes-icon.png', backgroundSrc: 'https://placehold.co/600x400.png', iconHint: 'star heart', difficulty: 'medium', activityType: 'placeholder' },
     ],
   },
 ];
